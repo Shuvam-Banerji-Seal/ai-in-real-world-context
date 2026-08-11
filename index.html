@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI in Current World Context — A Field Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0d0c;
+    --bg-2:#0f1413;
+    --panel:#131a18;
+    --fg:#e8efe9;
+    --muted:#7a8a82;
+    --dim:#4a5752;
+    --green:#7ee787;
+    --green-d:#3fb950;
+    --amber:#ffa657;
+    --red:#ff7b72;
+    --blue:#79c0ff;
+    --purple:#d2a8ff;
+    --border:rgba(126,231,135,0.14);
+    --border-soft:rgba(255,255,255,0.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--fg);font-family:'JetBrains Mono',monospace;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  
+  /* Grain texture overlay */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:1000;opacity:.035;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:999;
+    background:radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.45) 100%);
+  }
+
+  /* Progress bar */
+  #progress{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--green),var(--amber));width:0;z-index:100;transition:width .4s ease}
+  
+  /* Slide counter + nav */
+  #hud{position:fixed;bottom:18px;right:24px;z-index:100;display:flex;align-items:center;gap:14px;font-size:13px;color:var(--muted);font-family:'JetBrains Mono'}
+  #hud .counter{padding:5px 10px;border:1px solid var(--border);background:rgba(0,0,0,.4);backdrop-filter:blur(6px)}
+  #hud .counter b{color:var(--green)}
+  .nav-btn{width:34px;height:34px;border:1px solid var(--border);background:rgba(0,0,0,.4);color:var(--fg);cursor:pointer;font-family:inherit;font-size:14px;transition:all .2s;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px)}
+  .nav-btn:hover{border-color:var(--green);color:var(--green);background:rgba(126,231,135,.06)}
+  .nav-btn:disabled{opacity:.25;cursor:not-allowed}
+
+  /* Top-left brand */
+  #brand{position:fixed;top:18px;left:24px;z-index:100;font-size:11px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase}
+  #brand b{color:var(--green)}
+
+  /* Deck */
+  #deck{position:fixed;inset:0}
+  .slide{position:absolute;inset:0;padding:6vh 7vw;display:flex;flex-direction:column;justify-content:center;opacity:0;pointer-events:none;transform:translateX(40px);transition:opacity .5s ease, transform .5s cubic-bezier(.2,.7,.2,1)}
+  .slide.active{opacity:1;pointer-events:auto;transform:translateX(0)}
+  .slide.prev{transform:translateX(-40px)}
+
+  /* Typography */
+  .kicker{font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--green);margin-bottom:14px;display:flex;align-items:center;gap:14px}
+  .kicker::before{content:"";width:30px;height:1px;background:var(--green)}
+  .kicker .num{color:var(--muted)}
+  h1.display{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(48px,7vw,108px);line-height:.95;letter-spacing:-.03em;margin-bottom:18px}
+  h1.display em{font-style:normal;color:var(--green)}
+  h1.display .strike{text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:4px;color:var(--dim)}
+  h2.title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:clamp(34px,4.5vw,64px);line-height:1;letter-spacing:-.02em;margin-bottom:24px}
+  h2.title em{font-style:normal;color:var(--amber)}
+  h3.sub{font-family:'Space Grotesk',sans-serif;font-weight:500;font-size:clamp(20px,2vw,26px);color:var(--muted);margin-bottom:30px;letter-spacing:-.01em}
+  .lead{font-size:clamp(17px,1.3vw,21px);line-height:1.7;max-width:62ch;color:#c9d3cc}
+  .lead strong{color:var(--green);font-weight:500}
+  
+  /* Decorative elements */
+  .grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(126,231,135,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(126,231,135,.025) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;mask-image:radial-gradient(ellipse at center, black 30%, transparent 80%)}
+  
+  /* Field-note callout */
+  .fieldnote{border:1px solid var(--border);background:linear-gradient(135deg,rgba(126,231,135,.04),transparent);padding:18px 22px;margin-top:24px;position:relative;max-width:62ch}
+  .fieldnote::before{content:"§ FIELD NOTE";position:absolute;top:-9px;left:14px;background:var(--bg);padding:0 8px;font-size:10px;color:var(--green);letter-spacing:.2em}
+  .fieldnote.amber::before{color:var(--amber)}
+  .fieldnote.amber{border-color:rgba(255,166,87,.25);background:linear-gradient(135deg,rgba(255,166,87,.04),transparent)}
+  
+  /* Lists */
+  ul.dots{list-style:none;padding:0}
+  ul.dots li{padding:8px 0 8px 28px;position:relative;color:#c9d3cc}
+  ul.dots li::before{content:"⋄";position:absolute;left:0;color:var(--green);font-weight:700}
+  ul.dots li b{color:var(--fg);font-weight:500}
+
+  /* Layout helpers */
+  .row{display:flex;gap:32px;align-items:center}
+  .col{display:flex;flex-direction:column;gap:14px}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+  .three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  
+  /* Terminal block */
+  .terminal{background:#0a0e0d;border:1px solid var(--border);font-family:'JetBrains Mono';font-size:15px;padding:18px 22px;position:relative;overflow:hidden}
+  .terminal::before{content:"● ● ●";position:absolute;top:8px;right:14px;color:var(--dim);font-size:8px;letter-spacing:2px}
+  .terminal .ln{display:block;color:#c9d3cc}
+  .terminal .ln.prompt::before{content:"$ ";color:var(--green)}
+  .terminal .ln.in::before{content:"» ";color:var(--amber)}
+  .terminal .ln.ok::before{content:"✓ ";color:var(--green)}
+  .terminal .ln.dim{color:var(--muted)}
+  .terminal .ln b{color:var(--green);font-weight:500}
+  .terminal .ln em{color:var(--amber);font-style:normal}
+
+  /* Cards */
+  .card{border:1px solid var(--border-soft);background:rgba(255,255,255,.015);padding:18px;transition:all .2s;position:relative}
+  .card:hover{border-color:var(--border);background:rgba(126,231,135,.02)}
+  .card .tag{font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
+  .card .name{font-family:'Space Grotesk';font-weight:600;font-size:18px;margin-top:6px;color:var(--fg)}
+  .card .meta{font-size:12px;color:var(--dim);margin-top:4px}
+
+  /* Tag chips */
+  .chip{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border:1px solid var(--border-soft);font-size:14px;color:#c9d3cc;background:rgba(255,255,255,.02)}
+  .chip.ai{border-color:rgba(126,231,135,.3);color:var(--green)}
+  .chip.ai::before{content:"";width:6px;height:6px;background:var(--green);border-radius:50%}
+  .chip.tools{border-color:rgba(255,166,87,.3);color:var(--amber)}
+
+  /* Tool grid */
+  .tool-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin:20px 0}
+  .tool{padding:14px 10px;border:1px solid var(--border-soft);text-align:center;font-size:15px;font-weight:500;background:rgba(255,255,255,.015);transition:all .25s;position:relative;font-family:'Space Grotesk'}
+  .tool.ai{border-color:rgba(126,231,135,.3);color:var(--green);background:rgba(126,231,135,.04)}
+  .tool.ai::after{content:"AI";position:absolute;top:3px;right:5px;font-size:7px;color:var(--green);letter-spacing:.1em;opacity:.6}
+  .tool:hover{transform:translateY(-2px);border-color:var(--green)}
+
+  /* Code inline */
+  code{font-family:'JetBrains Mono';background:rgba(126,231,135,.08);color:var(--green);padding:1px 6px;font-size:.92em;border:1px solid rgba(126,231,135,.12)}
+
+  /* Big number */
+  .bignum{font-family:'Space Grotesk';font-weight:300;font-size:clamp(80px,12vw,180px);line-height:1;color:var(--green);letter-spacing:-.04em}
+
+  /* Memes / ASCII */
+  .ascii{font-family:'JetBrains Mono';font-size:11px;line-height:1.2;color:var(--muted);white-space:pre}
+
+  /* Specific slide layouts */
+  .slide-title{justify-content:center;align-items:flex-start}
+  .title-meta{margin-top:40px;display:flex;gap:40px;font-size:14px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase}
+  .title-meta b{color:var(--fg);font-weight:500;display:block;margin-top:4px;font-size:16px;text-transform:none;letter-spacing:0}
+
+  /* Animation on active */
+  .slide.active .kicker{animation:fadeUp .6s .1s both}
+  .slide.active h2.title,.slide.active h1.display{animation:fadeUp .6s .2s both}
+  .slide.active .lead,.slide.active h3.sub{animation:fadeUp .6s .3s both}
+
+  /* Step reveal — points appear one by one (click / → / space) */
+  .step{opacity:0;transform:translateY(14px);transition:opacity .45s ease,transform .45s ease}
+  .step.revealed{opacity:1;transform:translateY(0)}
+
+  /* Overview grid */
+  #overview{position:fixed;inset:0;z-index:200;background:rgba(8,10,9,.96);backdrop-filter:blur(8px);display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;padding:7vh 6vw;overflow:auto;opacity:0;pointer-events:none;transition:opacity .3s}
+  #overview.open{opacity:1;pointer-events:auto}
+  #overview button{background:rgba(255,255,255,.03);border:1px solid var(--border-soft);color:var(--fg);font-family:inherit;font-size:13px;text-align:left;padding:12px 14px;cursor:pointer;line-height:1.5}
+  #overview button:hover,#overview button.cur{border-color:var(--green);color:var(--green);background:rgba(126,231,135,.06)}
+  #overview button .n{color:var(--green);font-weight:700;margin-right:8px}
+
+  /* Help overlay */
+  #help{position:fixed;inset:0;z-index:210;background:rgba(8,10,9,.96);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+  #help.open{opacity:1;pointer-events:auto}
+  #help .box{border:1px solid var(--border);background:var(--panel);padding:28px 34px;max-width:520px;width:92%;max-height:86vh;overflow:auto}
+  #help h4{font-family:'Space Grotesk';font-weight:600;color:var(--green);margin-bottom:12px;letter-spacing:.12em;text-transform:uppercase;font-size:13px}
+  #help .r{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:7px 0;font-size:14px;border-bottom:1px solid var(--border-soft)}
+  #help .r kbd{color:var(--amber);font-family:'JetBrains Mono';background:rgba(255,255,255,.04);padding:1px 8px;border:1px solid var(--border-soft);border-radius:3px;white-space:nowrap}
+  #help .r span{color:#c9d3cc}
+  #help .close{text-align:right;margin-top:14px;color:var(--muted);font-size:12px}
+  
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+  /* Diagrams */
+  svg.diagram{width:100%;height:auto;max-width:560px}
+  svg.diagram .stroke{stroke:var(--green);fill:none;stroke-width:1.5}
+  svg.diagram .stroke-amber{stroke:var(--amber);fill:none;stroke-width:1.5}
+  svg.diagram .stroke-muted{stroke:var(--dim);fill:none;stroke-width:1}
+  svg.diagram text{font-family:'JetBrains Mono';font-size:11px;fill:var(--fg)}
+  svg.diagram .lbl-mut{fill:var(--muted);font-size:10px}
+  
+  /* Hand-drawn filter for meme figures */
+  .sketch{filter:url(#wobble)}
+  
+  /* Paper card grid */
+  .papers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+  .paper{border:1px solid var(--border-soft);padding:12px 14px;background:rgba(255,255,255,.012);transition:all .2s;cursor:pointer}
+  .paper:hover{border-color:var(--green);background:rgba(126,231,135,.03)}
+  .paper .yr{font-size:12px;color:var(--green);letter-spacing:.15em}
+  .paper .ti{font-family:'Space Grotesk';font-weight:500;font-size:15px;color:var(--fg);margin:5px 0 8px;line-height:1.25}
+  .paper .au{font-size:12px;color:var(--muted)}
+  .paper .arx{font-size:12px;color:var(--dim);margin-top:5px;font-family:'JetBrains Mono'}
+
+  /* Probability bars */
+  .prob-bar{display:flex;align-items:center;gap:14px;margin:6px 0;font-size:15px}
+  .prob-bar .tok{width:80px;color:var(--fg);font-weight:500}
+  .prob-bar .bar{flex:1;height:10px;background:rgba(255,255,255,.04);position:relative;overflow:hidden}
+  .prob-bar .bar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--green),var(--green-d));display:block}
+  .prob-bar .pct{width:60px;color:var(--muted);text-align:right;font-size:13px}
+
+  /* Slide-specific theming via body class */
+  .deco-corner{position:absolute;font-family:'JetBrains Mono';font-size:10px;color:var(--dim);letter-spacing:.15em}
+  .deco-tl{top:20px;left:24px}
+  .deco-tr{top:20px;right:24px}
+  .deco-bl{bottom:20px;left:24px}
+  .deco-br{bottom:20px;right:24px}
+
+  /* Cursor blink */
+  .cursor{display:inline-block;width:8px;height:14px;background:var(--green);animation:blink 1s steps(2) infinite;vertical-align:middle;margin-left:2px}
+  @keyframes blink{50%{opacity:0}}
+
+  /* Meme container */
+  .meme{display:inline-block;padding:8px}
+  .meme svg{display:block}
+
+  /* X badge */
+  .x-badge{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border:2px solid var(--red);color:var(--red);font-family:'Space Grotesk';font-weight:700;font-size:22px;border-radius:50%;transform:rotate(-8deg)}
+
+  /* Question options */
+  .opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:780px}
+  .opt{padding:18px 22px;border:1px solid var(--border-soft);background:rgba(255,255,255,.012);font-size:17px;transition:all .25s;cursor:default;display:flex;align-items:center;gap:14px}
+  .opt:hover{border-color:var(--green);background:rgba(126,231,135,.03);transform:translateX(4px)}
+  .opt .q{color:var(--green);font-weight:700;font-family:'Space Grotesk'}
+  .opt .t{color:#c9d3cc}
+  .opt.hype{border-color:rgba(255,123,114,.3)}
+  .opt.hype .q{color:var(--red)}
+
+  /* Final slide */
+  .qmark{font-family:'Space Grotesk';font-weight:300;font-size:clamp(120px,18vw,260px);line-height:.85;letter-spacing:-.06em;color:var(--green)}
+
+  /* Section divider big number */
+  .sec-num{font-family:'Space Grotesk';font-weight:200;font-size:clamp(120px,18vw,240px);line-height:.85;color:var(--green);opacity:.18;position:absolute;right:7vw;top:8vh;pointer-events:none}
+
+  /* Image placeholders styled as polaroid */
+  .polaroid{background:#f5f1e8;padding:14px 14px 32px;transform:rotate(-2deg);box-shadow:0 12px 30px rgba(0,0,0,.5);display:inline-block}
+  .polaroid img,.polaroid svg{display:block;width:240px;height:auto}
+  .polaroid .cap{font-family:'Caveat';font-size:18px;color:#222;text-align:center;margin-top:8px}
+
+  /* Tool grid logos */
+  .tool img{height:28px;width:28px;object-fit:contain;display:block;margin:0 auto 8px;filter:drop-shadow(0 0 5px rgba(126,231,135,.25))}
+
+  /* Meme image cards (white-background images on dark theme) */
+  .meme-card{background:#fff;border-radius:8px;padding:8px;box-shadow:0 12px 30px rgba(0,0,0,.5);max-width:100%;line-height:0}
+  .meme-card img{display:block;max-width:100%;height:auto;border-radius:4px}
+  .meme-card.tilt-l{transform:rotate(-2deg)}
+  .meme-card.tilt-r{transform:rotate(2deg)}
+  .meme-row{display:flex;gap:16px;justify-content:center;align-items:flex-start;flex-wrap:wrap}
+  .meme-row .meme-card{flex:0 1 48%;max-width:300px}
+
+  /* Small inline logo chips */
+  .logo-chip{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border:1px solid var(--border-soft);font-size:14px;color:#c9d3cc;background:rgba(255,255,255,.02)}
+  .logo-chip img{height:18px;width:18px;object-fit:contain}
+
+  /* Selection */
+  ::selection{background:var(--green);color:#000}
+</style>
+</head>
+<body>
+
+<!-- SVG filters for hand-drawn feel -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <filter id="wobble">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.2"/>
+    </filter>
+    <filter id="rough">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5"/>
+    </filter>
+  </defs>
+</svg>
+
+<div id="progress"></div>
+<div id="brand"><b>◆</b> FIELD GUIDE · v1.0 · IISER Kolkata</div>
+
+<div id="deck">
+
+<!-- ========== SLIDE 1: TITLE ========== -->
+<section class="slide active">
+  <div class="grid-bg"></div>
+  <div class="deco-corner deco-tl">N 22.97° · E 88.51°</div>
+  <div class="deco-corner deco-tr">SESSION 01 / 26</div>
+  <div class="deco-corner deco-bl">EST. READING TIME · 60 MIN</div>
+  
+  <div class="kicker"><span class="num">§ 00</span> PROLOGUE — BOOT SEQUENCE</div>
+  <h1 class="display">AI in the <em>Current</em><br>World Context<span class="cursor"></span></h1>
+  <h3 class="sub">A 60-minute field guide to tools, services &amp; next-token predictors.</h3>
+  
+  <div class="title-meta">
+    <div>Author<b>Shuvam Banerji Seal</b></div>
+    <div>Affiliation<b>BS–MS Final Year · IISER Kolkata</b></div>
+    <div>Date<b>August 2026</b></div>
+    <div>Repo<b>github.com/Shuvam-Banerji-Seal</b></div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 2: CONTENTS ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 00.1</span> TABLE OF CONTENTS</div>
+  <h2 class="title">The <em>map</em>, before the territory.</h2>
+  
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px 40px;margin-top:8px;max-width:1100px">
+    <div style="display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--border-soft)">
+      <span style="color:var(--green);font-family:'Space Grotesk';font-weight:600;min-width:28px">01</span>
+      <div><b style="font-family:'Space Grotesk'">Prologue</b><br><span style="color:var(--muted);font-size:14px">AI in the Real World — Real vs Current</span></div>
+    </div>
+    <div style="display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--border-soft)">
+      <span style="color:var(--green);font-family:'Space Grotesk';font-weight:600;min-width:28px">02</span>
+      <div><b style="font-family:'Space Grotesk'">The Agenda</b><br><span style="color:var(--muted);font-size:14px">Reading the room · The goal</span></div>
+    </div>
+    <div style="display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--border-soft)">
+      <span style="color:var(--green);font-family:'Space Grotesk';font-weight:600;min-width:28px">03</span>
+      <div><b style="font-family:'Space Grotesk'">Tool Time</b><br><span style="color:var(--muted);font-size:14px">What kind of tools? Are they AI?</span></div>
+    </div>
+    <div style="display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--border-soft)">
+      <span style="color:var(--green);font-family:'Space Grotesk';font-weight:600;min-width:28px">04</span>
+      <div><b style="font-family:'Space Grotesk'">The AI Landscape</b><br><span style="color:var(--muted);font-size:14px">Umbrella term · Next-token predictors · Alignment</span></div>
+    </div>
+    <div style="display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--border-soft)">
+      <span style="color:var(--green);font-family:'Space Grotesk';font-weight:600;min-width:28px">05</span>
+      <div><b style="font-family:'Space Grotesk'">Fundamentals</b><br><span style="color:var(--muted);font-size:14px">Services · Where information lives · It's all text</span></div>
+    </div>
+    <div style="display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--border-soft)">
+      <span style="color:var(--green);font-family:'Space Grotesk';font-weight:600;min-width:28px">06</span>
+      <div><b style="font-family:'Space Grotesk'">Knowledge Compression</b><br><span style="color:var(--muted);font-size:14px">Human knowledge → Model · The distribution</span></div>
+    </div>
+    <div style="display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--border-soft)">
+      <span style="color:var(--green);font-family:'Space Grotesk';font-weight:600;min-width:28px">07</span>
+      <div><b style="font-family:'Space Grotesk'">Tools You Should Learn</b><br><span style="color:var(--muted);font-size:14px">Git · LaTeX &amp; Overleaf · Do it yourself?</span></div>
+    </div>
+    <div style="display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--border-soft)">
+      <span style="color:var(--green);font-family:'Space Grotesk';font-weight:600;min-width:28px">08</span>
+      <div><b style="font-family:'Space Grotesk'">Agentic Tools</b><br><span style="color:var(--muted);font-size:14px">Use them · The definition</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 3: REAL → CURRENT ========== -->
+<section class="slide">
+  <div class="sec-num">01</div>
+  <div class="kicker"><span class="num">§ 01</span> PROLOGUE — A TINY EDIT, A BIG SHIFT</div>
+  
+  <h1 class="display" style="font-size:clamp(40px,5.5vw,82px);margin-top:20px">
+    AI in the <span class="strike">Real</span> <span style="color:var(--muted)">→</span> <em>Current</em><br>World Context
+  </h1>
+  
+  <div class="two-col" style="margin-top:40px">
+    <div>
+      <ul class="dots">
+        <li><b>Real</b> promises a fixed world — it isn't one.</li>
+        <li><b>Current</b>: what exists today, in your browser, your phone, your lab.</li>
+        <li>Everything in this talk is something you can <b>touch this week</b>.</li>
+      </ul>
+    </div>
+    <div style="display:flex;justify-content:center">
+      <!-- Hand-drawn map / compass -->
+      <svg viewBox="0 0 240 240" width="240" height="240" class="sketch">
+        <circle cx="120" cy="120" r="100" class="stroke-muted" stroke-dasharray="3 4"/>
+        <circle cx="120" cy="120" r="70" class="stroke" stroke-width="1.2"/>
+        <circle cx="120" cy="120" r="40" class="stroke-amber" stroke-width="1.2"/>
+        <circle cx="120" cy="120" r="6" fill="var(--green)"/>
+        <path d="M120 30 L120 60 M120 180 L120 210 M30 120 L60 120 M180 120 L210 120" class="stroke"/>
+        <path d="M120 50 L130 80 L120 70 L110 80 Z" fill="var(--red)"/>
+        <text x="120" y="22" text-anchor="middle" class="lbl-mut">N</text>
+        <text x="120" y="228" text-anchor="middle" class="lbl-mut">S</text>
+        <text x="222" y="124" class="lbl-mut">E</text>
+        <text x="14" y="124" class="lbl-mut">W</text>
+        <text x="120" y="125" text-anchor="middle" font-size="8" fill="var(--amber)">NOW</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 4: WHAT DO YOU MEAN BY AI? ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 01.2</span> READ THE ROOM — LET'S START WITH YOU</div>
+  <h2 class="title">What do <em>you</em> mean by "AI"?</h2>
+  <h3 class="sub">so, hands up — which one is it?</h3>
+  
+  <div class="opt-grid">
+    <div class="opt"><span class="q">A</span><span class="t">ChatGPT / Gemini / Copilot</span></div>
+    <div class="opt"><span class="q">B</span><span class="t">Robots &amp; self-driving cars</span></div>
+    <div class="opt"><span class="q">C</span><span class="t">The algorithm recommending your reels</span></div>
+    <div class="opt"><span class="q">D</span><span class="t">A calculator on steroids</span></div>
+    <div class="opt hype" style="grid-column:1/3"><span class="q">E</span><span class="t">Pure hype?</span></div>
+  </div>
+  
+  <div class="fieldnote amber">
+    <b style="color:var(--amber)">THE DEAL →</b> Whatever you said — we'll build on it. By the end, you'll have a <i>sharper</i> answer.
+  </div>
+</section>
+
+<!-- ========== SLIDE 5: THREE CIRCLES OF KNOWING ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 02</span> THE AGENDA — THE ROOM, MAPPED</div>
+  <h2 class="title">Three circles of <em>knowing</em>.</h2>
+  
+  <div class="two-col">
+    <div>
+      <svg viewBox="0 0 400 400" class="diagram" style="max-width:420px">
+        <!-- Outer circle: unknown unknowns -->
+        <circle cx="200" cy="200" r="190" fill="rgba(255,123,114,0.05)" stroke="var(--red)" stroke-width="1" stroke-dasharray="4 4"/>
+        <!-- Middle: known unknowns -->
+        <circle cx="200" cy="200" r="130" fill="rgba(255,166,87,0.06)" stroke="var(--amber)" stroke-width="1.2"/>
+        <!-- Inner: known knowns -->
+        <circle cx="200" cy="200" r="65" fill="rgba(126,231,135,0.12)" stroke="var(--green)" stroke-width="1.5"/>
+        
+        <!-- Arrow showing expansion -->
+        <path d="M 200 200 Q 280 200 320 130" class="stroke" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+        <defs>
+          <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L9,3 z" fill="var(--green)"/>
+          </marker>
+        </defs>
+        
+        <text x="200" y="204" text-anchor="middle" font-size="11" fill="var(--green)" font-weight="600">KNOWN</text>
+        <text x="200" y="100" text-anchor="middle" font-size="10" fill="var(--amber)">KNOW YOU DON'T KNOW</text>
+        <text x="200" y="40" text-anchor="middle" font-size="10" fill="var(--red)">DON'T KNOW YOU DON'T KNOW</text>
+        <text x="340" y="125" font-size="10" fill="var(--green)" font-family="Caveat" font-style="italic">→ grow this</text>
+      </svg>
+    </div>
+    <div>
+      <p class="lead">Objective: <strong>increase the area of things you know you don't know.</strong></p>
+      <p class="lead" style="margin-top:18px;color:var(--muted)">While you're here → move the boundary outward.<br>When you go home → the unknown unknowns shrink.</p>
+      <div class="fieldnote">
+        <b>Why?</b> The frontier of useful knowledge is the ring just outside what you currently know. That's where curiosity compounds.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 6: PREMONITION ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 02.3</span> I HAD A PREMONITION — AND IT WAS ABOUT TOOLS</div>
+  <h2 class="title">The audience wants <em>tools</em>,<br>not theory.</h2>
+  
+  <div class="two-col">
+    <div>
+      <ul class="dots">
+        <li>I got the premonition.</li>
+        <li>And the agenda wrote itself.</li>
+      </ul>
+      <div style="margin-top:40px;display:flex;align-items:center;gap:20px">
+        <span class="bignum" style="font-size:100px">#1</span>
+        <div>
+          <div style="font-size:12px;color:var(--muted);letter-spacing:.2em">GOAL</div>
+          <div style="font-family:'Space Grotesk';font-size:24px;font-weight:600;max-width:280px;line-height:1.2">In the next 1 hour, you will learn about tools.</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:center">
+      <!-- Stick figure with lightbulb premonition -->
+      <svg viewBox="0 0 320 280" width="320" height="280" class="sketch">
+        <!-- lightbulb -->
+        <ellipse cx="200" cy="60" rx="28" ry="32" fill="none" stroke="var(--amber)" stroke-width="2"/>
+        <path d="M188 90 L188 100 M212 90 L212 100 M192 102 L208 102" stroke="var(--amber)" stroke-width="2" fill="none"/>
+        <line x1="200" y1="20" x2="200" y2="10" stroke="var(--amber)" stroke-width="1.5"/>
+        <line x1="170" y1="35" x2="162" y2="28" stroke="var(--amber)" stroke-width="1.5"/>
+        <line x1="230" y1="35" x2="238" y2="28" stroke="var(--amber)" stroke-width="1.5"/>
+        <text x="245" y="55" font-size="11" fill="var(--amber)" font-family="Caveat" font-style="italic">! tools</text>
+        <!-- head -->
+        <circle cx="160" cy="130" r="22" fill="none" stroke="var(--fg)" stroke-width="2"/>
+        <!-- eyes wide -->
+        <circle cx="153" cy="128" r="2" fill="var(--fg)"/>
+        <circle cx="167" cy="128" r="2" fill="var(--fg)"/>
+        <path d="M153 138 Q160 142 167 138" stroke="var(--fg)" stroke-width="1.5" fill="none"/>
+        <!-- body -->
+        <line x1="160" y1="152" x2="160" y2="210" stroke="var(--fg)" stroke-width="2"/>
+        <!-- arms up in realization -->
+        <line x1="160" y1="170" x2="195" y2="100" stroke="var(--fg)" stroke-width="2"/>
+        <line x1="160" y1="170" x2="125" y2="155" stroke="var(--fg)" stroke-width="2"/>
+        <!-- legs -->
+        <line x1="160" y1="210" x2="140" y2="260" stroke="var(--fg)" stroke-width="2"/>
+        <line x1="160" y1="210" x2="180" y2="260" stroke="var(--fg)" stroke-width="2"/>
+        <!-- ground -->
+        <line x1="80" y1="265" x2="240" y2="265" stroke="var(--dim)" stroke-width="1.5"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 7: TOOL TIME — THE GRID ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 03</span> TOOL TIME — WHAT KIND OF TOOLS?</div>
+  <h2 class="title">Spoiler: <em>not all of these</em> are AI.</h2>
+  
+  <div class="tool-grid">
+    <div class="tool"><img src="assets/img/git.png" alt="">git</div>
+    <div class="tool"><img src="assets/img/github.png" alt="">GitHub</div>
+    <div class="tool"><img src="assets/img/gitlab.png" alt="">GitLab</div>
+    <div class="tool"><img src="assets/img/codeberg.png" alt="">Codeberg</div>
+    <div class="tool"><img src="assets/img/latex.png" alt="">LaTeX</div>
+    <div class="tool"><img src="assets/img/overleaf.png" alt="">Overleaf</div>
+    <div class="tool"><img src="assets/img/python.png" alt="">Python</div>
+    <div class="tool"><img src="assets/img/jupyter.png" alt="">Jupyter</div>
+    <div class="tool"><img src="assets/img/visualstudiocode.png" alt="">VS Code</div>
+    <div class="tool"><img src="assets/img/docker.png" alt="">Docker</div>
+    <div class="tool"><img src="assets/img/archlinux.png" alt="">Linux</div>
+    <div class="tool"><img src="assets/img/streamlit.png" alt="">Streamlit</div>
+    <div class="tool"><img src="assets/img/markdown.png" alt="">Markdown</div>
+    <div class="tool"><img src="assets/img/threejs_w.png" alt="">Three.js</div>
+    <div class="tool"><img src="assets/img/django.png" alt="">Django</div>
+    <div class="tool"><img src="assets/img/flask.png" alt="">Flask</div>
+    <div class="tool"><img src="assets/img/rust.png" alt="">Rust</div>
+    <div class="tool"><img src="assets/img/gnometerminal.png" alt="">Terminal</div>
+    <div class="tool ai"><img src="assets/img/openai_w.png" alt="">OpenAI</div>
+    <div class="tool ai"><img src="assets/img/chatgpt.png" alt="">ChatGPT</div>
+    <div class="tool ai"><img src="assets/img/anthropic.png" alt="">Anthropic</div>
+    <div class="tool ai"><img src="assets/img/anthropic.png" alt="">Claude</div>
+    <div class="tool ai"><img src="assets/img/googlegemini.png" alt="">Gemini</div>
+    <div class="tool ai"><img src="assets/img/huggingface.png" alt="">HuggingFace</div>
+  </div>
+  
+  <div style="display:flex;justify-content:center;gap:14px;margin-top:20px">
+    <span class="chip tools">LEGACY · LEVERAGE</span>
+    <span class="chip ai">AI · SITS ON TOP</span>
+  </div>
+  
+  <div style="display:flex;justify-content:center;margin-top:14px">
+    <div class="meme-card" style="width:170px"><img src="assets/img/meme_allthethings.png" alt="learn all the tools"></div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 8: ARE ALL THESE AI TOOLS? ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 03.2</span> NOPE — AND THAT'S EXACTLY THE POINT</div>
+  <h2 class="title">Most of them <em>aren't</em> AI.</h2>
+  
+  <div class="two-col">
+    <div>
+      <ul class="dots">
+        <li><b>Git, LaTeX, the terminal</b> — older than most of you. Zero AI.</li>
+        <li>The AI ones (ChatGPT, Gemini, Claude) <b>sit on top</b> of these.</li>
+      </ul>
+      
+      <div class="fieldnote">
+        <b style="color:var(--green)">THE POINT →</b> The non-AI tools are <i>leverage</i>: learn them once, use them forever.<br><br>
+        With them, the AI tools become <strong>superpowers</strong> instead of toys.
+      </div>
+    </div>
+    <div style="display:flex;justify-content:center;align-items:center;gap:20px;flex-direction:column">
+      <div class="meme-card tilt-l" style="max-width:420px"><img src="assets/img/meme_tools.jpeg" alt="are all these AI tools?"></div>
+      <div style="font-family:'Caveat';font-size:20px;color:var(--amber)">— the programmer-humour take</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 9: AI UMBRELLA ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 04</span> THE AI LANDSCAPE — AN UMBRELLA TERM</div>
+  <h2 class="title">AI is the <em>umbrella</em>. I work in <em>LLMs</em>.</h2>
+  
+  <div class="two-col">
+    <div style="display:flex;justify-content:center">
+      <svg viewBox="0 0 400 360" class="diagram" style="max-width:420px">
+        <ellipse cx="200" cy="180" rx="190" ry="160" fill="rgba(126,231,135,0.04)" stroke="var(--green)" stroke-width="1.2" stroke-dasharray="2 4"/>
+        <text x="200" y="40" text-anchor="middle" font-size="14" fill="var(--green)" font-family="Space Grotesk" font-weight="700">AI</text>
+        
+        <ellipse cx="200" cy="190" rx="150" ry="120" fill="rgba(255,166,87,0.05)" stroke="var(--amber)" stroke-width="1.2"/>
+        <text x="200" y="90" text-anchor="middle" font-size="12" fill="var(--amber)" font-family="Space Grotesk" font-weight="600">Machine Learning</text>
+        
+        <ellipse cx="200" cy="200" rx="110" ry="85" fill="rgba(121,192,255,0.06)" stroke="var(--blue)" stroke-width="1.2"/>
+        <text x="200" y="135" text-anchor="middle" font-size="11" fill="var(--blue)" font-family="Space Grotesk" font-weight="600">Deep Learning</text>
+        
+        <ellipse cx="200" cy="215" rx="70" ry="50" fill="rgba(210,168,255,0.12)" stroke="var(--purple)" stroke-width="1.5"/>
+        <text x="200" y="210" text-anchor="middle" font-size="12" fill="var(--purple)" font-family="Space Grotesk" font-weight="700">LLMs</text>
+        <text x="200" y="225" text-anchor="middle" font-size="9" fill="var(--purple)">(GenAI)</text>
+        
+        <!-- marker for "I work here" -->
+        <circle cx="200" cy="215" r="3" fill="var(--purple)"/>
+        <line x1="200" y1="215" x2="280" y2="285" stroke="var(--purple)" stroke-width="1" stroke-dasharray="2 2"/>
+        <text x="285" y="290" font-size="10" fill="var(--purple)" font-family="Caveat" font-style="italic" font-size="14">↑ I live here</text>
+      </svg>
+    </div>
+    <div>
+      <ul class="dots">
+        <li><b>AI</b> = the umbrella over everything "intelligent".</li>
+        <li>What I work in: <b>LLMs</b> — next-token predictors.</li>
+      </ul>
+      
+      <div class="meme-row" style="margin-top:20px">
+        <div class="meme-card tilt-l"><img src="assets/img/meme_expandingbrain.png" alt="the zoom levels of AI"></div>
+        <div class="meme-card tilt-r"><img src="assets/img/xkcd_machine_learning.png" alt="xkcd 1838 — machine learning"></div>
+      </div>
+      <div style="margin-top:10px;text-align:center;font-family:'Caveat';font-size:17px;color:var(--amber)">xkcd 1838 — "machine learning, the honest version"</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 10: NEXT-TOKEN PREDICTORS ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 04.2</span> LLMs = NEXT-TOKEN PREDICTORS</div>
+  <h2 class="title">Everything ChatGPT does — <em>one loop</em>.</h2>
+  
+  <div class="two-col">
+    <div>
+      <div style="font-family:'Space Grotesk';font-size:24px;font-weight:500;background:rgba(126,231,135,0.04);border:1px solid var(--border);padding:18px 22px;margin-bottom:18px">
+        The cat sat on the <span style="color:var(--amber)">?</span>
+      </div>
+      
+      <div style="font-size:12px;color:var(--muted);letter-spacing:.15em;margin-bottom:8px">p(next token)</div>
+      
+      <div class="prob-bar"><span class="tok">mat</span><span class="bar"><i style="width:78%"></i></span><span class="pct">0.78</span></div>
+      <div class="prob-bar"><span class="tok">roof</span><span class="bar"><i style="width:14%;background:linear-gradient(90deg,var(--amber),#cc7a3a)"></i></span><span class="pct">0.14</span></div>
+      <div class="prob-bar"><span class="tok">moon</span><span class="bar"><i style="width:5%;background:linear-gradient(90deg,var(--red),#a8302c)"></i></span><span class="pct">0.05</span></div>
+      <div class="prob-bar"><span class="tok">meow</span><span class="bar"><i style="width:3%;background:linear-gradient(90deg,var(--red),#a8302c)"></i></span><span class="pct">0.03</span></div>
+    </div>
+    <div>
+      <ul class="dots" style="font-size:15px">
+        <li><b>Input</b>: a token sequence.<br><b>Output</b>: probabilities over the next token.</li>
+        <li>The model never <b>searches</b> — it <b>predicts</b>.</li>
+        <li>It repeats this loop, token by token, until you stop it.</li>
+        <li>Add <b>tools</b>, and prediction becomes <b>action</b>.</li>
+      </ul>
+      
+      <!-- Meme: trust me bro -->
+      <div style="margin-top:24px;display:flex;align-items:center;gap:14px">
+        <div class="meme-card" style="max-width:150px"><img src="assets/img/meme_thisisfine.png" alt="everything is fine"></div>
+        <div style="font-family:'Caveat';font-size:22px;color:var(--green);line-height:1.1;max-width:200px">
+          "trust me bro,<br>I know this token"
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 11: THROUGH THE LENS ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 04.3</span> THROUGH THE LENS — ONCE YOU SEE IT</div>
+  <h2 class="title">The hype is loud.<br>The mechanism is <em>simple</em>.</h2>
+  
+  <div class="two-col">
+    <div style="display:flex;justify-content:center">
+      <svg viewBox="0 0 420 360" class="diagram" style="max-width:440px">
+        <!-- Lens shape -->
+        <ellipse cx="210" cy="180" rx="80" ry="140" fill="rgba(126,231,135,0.08)" stroke="var(--green)" stroke-width="2"/>
+        <ellipse cx="210" cy="180" rx="50" ry="100" fill="none" stroke="var(--green)" stroke-width="1" stroke-dasharray="3 3"/>
+        
+        <!-- Input arrows from left -->
+        <text x="40" y="60" font-size="11" fill="var(--muted)">deep learning</text>
+        <line x1="120" y1="56" x2="170" y2="100" stroke="var(--muted)" stroke-width="1" marker-end="url(#arr2)"/>
+        
+        <text x="40" y="100" font-size="11" fill="var(--muted)">AGI</text>
+        <line x1="80" y1="96" x2="170" y2="130" stroke="var(--muted)" stroke-width="1" marker-end="url(#arr2)"/>
+        
+        <text x="40" y="140" font-size="11" fill="var(--muted)">neural nets</text>
+        <line x1="120" y1="136" x2="170" y2="160" stroke="var(--muted)" stroke-width="1" marker-end="url(#arr2)"/>
+        
+        <text x="40" y="180" font-size="11" fill="var(--muted)">reasoning</text>
+        <line x1="100" y1="176" x2="170" y2="180" stroke="var(--muted)" stroke-width="1" marker-end="url(#arr2)"/>
+        
+        <text x="40" y="220" font-size="11" fill="var(--muted)">chatbots</text>
+        <line x1="100" y1="216" x2="170" y2="200" stroke="var(--muted)" stroke-width="1" marker-end="url(#arr2)"/>
+        
+        <text x="40" y="260" font-size="11" fill="var(--muted)">agents</text>
+        <line x1="80" y1="256" x2="170" y2="220" stroke="var(--muted)" stroke-width="1" marker-end="url(#arr2)"/>
+        
+        <text x="40" y="300" font-size="11" fill="var(--muted)">alignment · RAG</text>
+        <line x1="140" y1="296" x2="170" y2="240" stroke="var(--muted)" stroke-width="1" marker-end="url(#arr2)"/>
+        
+        <defs>
+          <marker id="arr2" markerWidth="6" markerHeight="6" refX="5" refY="2" orient="auto">
+            <path d="M0,0 L0,4 L5,2 z" fill="var(--muted)"/>
+          </marker>
+        </defs>
+        
+        <!-- Center label -->
+        <text x="210" y="175" text-anchor="middle" font-size="11" fill="var(--green)" font-weight="700">THE LENS</text>
+        
+        <!-- Output arrow -->
+        <line x1="290" y1="180" x2="370" y2="180" stroke="var(--green)" stroke-width="2" marker-end="url(#arrg)"/>
+        <defs>
+          <marker id="arrg" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L9,3 z" fill="var(--green)"/>
+          </marker>
+        </defs>
+        
+        <!-- Output formula -->
+        <text x="395" y="178" text-anchor="end" font-size="14" fill="var(--green)" font-family="JetBrains Mono" font-weight="600">p(wₜ | w&lt;ₜ)</text>
+        <text x="395" y="198" text-anchor="end" font-size="10" fill="var(--green)" font-family="Caveat" font-size="13" font-style="italic">next-token prediction</text>
+      </svg>
+    </div>
+    <div>
+      <ul class="dots">
+        <li><b>Agents?</b> next-token prediction + tools.</li>
+        <li><b>Alignment?</b> steering the same predictor.</li>
+        <li><b>RAG?</b> feeding the predictor fresh text.</li>
+        <li>The hype is loud; the mechanism is <strong>simple</strong>.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 12: ASSISTANT AXIS ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 04.4</span> THE ASSISTANT AXIS — FROM CHATBOT TO AGENT</div>
+  <h2 class="title">Where do <em>you</em> want to live<br>by the end of the year?</h2>
+  
+  <div class="step" style="margin-top:30px">
+    <svg viewBox="0 0 1000 240" style="width:100%;max-width:1100px">
+      <!-- Axis line -->
+      <line x1="60" y1="160" x2="940" y2="160" stroke="var(--green)" stroke-width="2"/>
+      <polygon points="940,160 925,153 925,167" fill="var(--green)"/>
+      
+      <!-- Tick marks -->
+      <line x1="180" y1="155" x2="180" y2="165" stroke="var(--fg)" stroke-width="1.5"/>
+      <line x1="500" y1="155" x2="500" y2="165" stroke="var(--fg)" stroke-width="1.5"/>
+      <line x1="820" y1="155" x2="820" y2="165" stroke="var(--fg)" stroke-width="1.5"/>
+      
+      <!-- Labels under -->
+      <text x="180" y="190" text-anchor="middle" font-size="14" fill="var(--fg)" font-family="Space Grotesk" font-weight="600">CHATBOT</text>
+      <text x="180" y="208" text-anchor="middle" font-size="11" fill="var(--muted)">answers</text>
+      <text x="180" y="222" text-anchor="middle" font-size="10" fill="var(--dim)">0 tools</text>
+      
+      <text x="500" y="190" text-anchor="middle" font-size="14" fill="var(--amber)" font-family="Space Grotesk" font-weight="600">ASSISTANT</text>
+      <text x="500" y="208" text-anchor="middle" font-size="11" fill="var(--muted)">does tasks for you</text>
+      <text x="500" y="222" text-anchor="middle" font-size="10" fill="var(--dim)">a few tools</text>
+      
+      <text x="820" y="190" text-anchor="middle" font-size="14" fill="var(--green)" font-family="Space Grotesk" font-weight="600">AGENT</text>
+      <text x="820" y="208" text-anchor="middle" font-size="11" fill="var(--muted)">acts in your environment</text>
+      <text x="820" y="222" text-anchor="middle" font-size="10" fill="var(--dim)">many tools + memory</text>
+      
+      <!-- "You are here" marker -->
+      <circle cx="180" cy="160" r="8" fill="var(--red)"/>
+      <circle cx="180" cy="160" r="14" fill="none" stroke="var(--red)" stroke-width="1.5" opacity="0.5"/>
+      <text x="180" y="130" text-anchor="middle" font-size="12" fill="var(--red)" font-family="Caveat" font-style="italic" font-size="16">you are here today</text>
+      
+      <!-- Progression arrows above -->
+      <path d="M 180 80 Q 500 60 820 80" stroke="var(--green)" stroke-width="1" fill="none" stroke-dasharray="3 3" opacity="0.5"/>
+      <text x="500" y="55" text-anchor="middle" font-size="11" fill="var(--muted)" letter-spacing=".2em">PROGRESSION →</text>
+    </svg>
+  </div>
+  
+  <div class="fieldnote" style="max-width:80ch;margin-top:30px">
+    The interesting work isn't in <b>chatbots</b> anymore — it's in <b style="color:var(--green)">agents that act</b>. Pick your target on the axis and walk toward it.
+  </div>
+</section>
+
+<!-- ========== SLIDE 13: ALIGNMENT WALL ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 04.5</span> THE ALIGNMENT WALL — A TINY CORNER OF A HUGE EFFORT</div>
+  <h2 class="title">Real research is happening.<br>Nine papers I keep going back to.</h2>
+  
+  <div class="papers">
+    <div class="paper">
+      <div class="yr">2016</div>
+      <div class="ti">Concrete Problems in AI Safety</div>
+      <div class="au">Amodei, Olah, et al.</div>
+      <div class="arx">arXiv:1606.06565</div>
+    </div>
+    <div class="paper">
+      <div class="yr">2018</div>
+      <div class="ti">AI Safety via Debate</div>
+      <div class="au">Irving, Christiano, Amodei</div>
+      <div class="arx">arXiv:1805.00899</div>
+    </div>
+    <div class="paper">
+      <div class="yr">2018</div>
+      <div class="ti">Scalable Agent Alignment via Reward Modeling</div>
+      <div class="au">Leike, Krueger, et al.</div>
+      <div class="arx">arXiv:1811.07871</div>
+    </div>
+    <div class="paper">
+      <div class="yr">2019</div>
+      <div class="ti">Fine-Tuning LMs from Human Preferences</div>
+      <div class="au">Ziegler, Stiennon, et al.</div>
+      <div class="arx">arXiv:1909.08593</div>
+    </div>
+    <div class="paper">
+      <div class="yr">2022</div>
+      <div class="ti">Training a Helpful &amp; Harmless Assistant (RLHF)</div>
+      <div class="au">Bai, Jones, et al.</div>
+      <div class="arx">arXiv:2204.05862</div>
+    </div>
+    <div class="paper">
+      <div class="yr">2022</div>
+      <div class="ti">Constitutional AI: Harmlessness from AI Feedback</div>
+      <div class="au">Bai, Kadavath, et al.</div>
+      <div class="arx">arXiv:2212.08073</div>
+    </div>
+    <div class="paper">
+      <div class="yr">2023</div>
+      <div class="ti">Towards Understanding Sycophancy</div>
+      <div class="au">Sharma, Tong, et al.</div>
+      <div class="arx">arXiv:2310.13548</div>
+    </div>
+    <div class="paper">
+      <div class="yr">2023</div>
+      <div class="ti">Weak-to-Strong Generalization</div>
+      <div class="au">Burns, Izmailov, et al.</div>
+      <div class="arx">arXiv:2312.09390</div>
+    </div>
+    <div class="paper">
+      <div class="yr">2024</div>
+      <div class="ti">The AI Alignment Paradox</div>
+      <div class="au">West &amp; Aydin</div>
+      <div class="arx">arXiv:2405.20806</div>
+    </div>
+  </div>
+  
+  <div class="fieldnote" style="margin-top:20px">
+    <b>Every paper is free on arXiv</b> — pick one, read it tonight.
+  </div>
+</section>
+
+<!-- ========== SLIDE 14: SERVICES ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 05</span> FUNDAMENTALS — HOW YOU INTERACT WITH COMPUTERS</div>
+  <h2 class="title">Spoiler: <em>services</em>.</h2>
+  
+  <div class="step" style="display:flex;justify-content:center;margin:20px 0">
+    <svg viewBox="0 0 900 280" style="width:100%;max-width:960px">
+      <!-- You node -->
+      <circle cx="80" cy="140" r="40" fill="rgba(126,231,135,0.1)" stroke="var(--green)" stroke-width="2"/>
+      <text x="80" y="145" text-anchor="middle" font-size="14" fill="var(--green)" font-family="Space Grotesk" font-weight="700">YOU</text>
+      
+      <!-- Arrows to services -->
+      <text x="180" y="60" font-size="10" fill="var(--muted)" font-family="Caveat" font-style="italic" font-size="14">query</text>
+      <text x="180" y="220" font-size="10" fill="var(--muted)" font-family="Caveat" font-style="italic" font-size="14">query</text>
+      <text x="180" y="140" font-size="10" fill="var(--muted)" font-family="Caveat" font-style="italic" font-size="14">query</text>
+      
+      <line x1="125" y1="125" x2="245" y2="60" stroke="var(--dim)" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#ar)"/>
+      <line x1="125" y1="140" x2="245" y2="140" stroke="var(--dim)" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#ar)"/>
+      <line x1="125" y1="155" x2="245" y2="220" stroke="var(--dim)" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#ar)"/>
+      
+      <defs>
+        <marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="2" orient="auto">
+          <path d="M0,0 L0,4 L6,2 z" fill="var(--dim)"/>
+        </marker>
+        <marker id="arg" markerWidth="8" markerHeight="8" refX="6" refY="2" orient="auto">
+          <path d="M0,0 L0,4 L6,2 z" fill="var(--amber)"/>
+        </marker>
+      </defs>
+      
+      <!-- Services -->
+      <rect x="250" y="40" width="140" height="40" fill="rgba(255,166,87,0.06)" stroke="var(--amber)" stroke-width="1.2"/>
+      <image href="assets/img/google.png" x="256" y="44" width="32" height="32"/>
+      <text x="345" y="65" text-anchor="middle" font-size="13" fill="var(--amber)" font-family="Space Grotesk" font-weight="600">Google</text>
+      
+      <rect x="250" y="120" width="140" height="40" fill="rgba(255,166,87,0.06)" stroke="var(--amber)" stroke-width="1.2"/>
+      <image href="assets/img/amazon.png" x="256" y="124" width="32" height="32"/>
+      <text x="345" y="145" text-anchor="middle" font-size="13" fill="var(--amber)" font-family="Space Grotesk" font-weight="600">Amazon</text>
+      
+      <rect x="250" y="200" width="140" height="40" fill="rgba(255,166,87,0.06)" stroke="var(--amber)" stroke-width="1.2"/>
+      <text x="320" y="225" text-anchor="middle" font-size="13" fill="var(--amber)" font-family="Space Grotesk" font-weight="600">Bank · UPI</text>
+      
+      <!-- Brackets showing they're services -->
+      <path d="M 410 40 L 425 40 L 425 240 L 410 240" stroke="var(--green)" stroke-width="1.2" fill="none"/>
+      <text x="450" y="145" font-size="11" fill="var(--green)" font-family="Space Grotesk" font-weight="600" letter-spacing=".1em">SERVICES</text>
+      
+      <!-- IR layer -->
+      <rect x="540" y="100" width="180" height="80" fill="rgba(121,192,255,0.06)" stroke="var(--blue)" stroke-width="1.5"/>
+      <text x="630" y="130" text-anchor="middle" font-size="13" fill="var(--blue)" font-family="Space Grotesk" font-weight="600">Information</text>
+      <text x="630" y="148" text-anchor="middle" font-size="13" fill="var(--blue)" font-family="Space Grotesk" font-weight="600">Retrieval</text>
+      <text x="630" y="168" text-anchor="middle" font-size="9" fill="var(--muted)">retrieve · rank · present</text>
+      
+      <line x1="430" y1="140" x2="540" y2="140" stroke="var(--dim)" stroke-width="1.2" marker-end="url(#ar)"/>
+      
+      <!-- Output -->
+      <line x1="720" y1="140" x2="800" y2="140" stroke="var(--amber)" stroke-width="1.5" marker-end="url(#arg)"/>
+      <rect x="800" y="115" width="80" height="50" fill="rgba(126,231,135,0.08)" stroke="var(--green)" stroke-width="1.2"/>
+      <text x="840" y="138" text-anchor="middle" font-size="11" fill="var(--green)" font-family="Space Grotesk" font-weight="600">Answers</text>
+      <text x="840" y="153" text-anchor="middle" font-size="9" fill="var(--muted)">a better life</text>
+    </svg>
+  </div>
+  
+  <p class="lead" style="text-align:center;max-width:80ch;margin:0 auto">
+    Google, Amazon, even banks — they are <strong>services</strong>.<br>
+    What do services do? They <strong>retrieve information</strong> for you — and make your life better.
+  </p>
+</section>
+
+<!-- ========== SLIDE 15: ABOUT ME ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 05.2</span> SIDE NOTE — WHO'S TALKING?</div>
+  <h2 class="title">About <em>me</em>.</h2>
+  
+  <div class="two-col">
+    <div>
+      <div style="border:1px solid var(--border);padding:24px;background:rgba(255,255,255,.02)">
+        <div style="font-family:'Space Grotesk';font-size:28px;font-weight:600;color:var(--green)">Shuvam Banerji Seal</div>
+        <div style="color:var(--muted);font-size:15px;margin-top:4px">BS–MS Final-Year Student · IISER Kolkata</div>
+        
+        <div style="margin-top:20px;display:grid;grid-template-columns:auto 1fr;gap:8px 14px;font-size:14px">
+          <span style="color:var(--dim);letter-spacing:.1em">MAJOR</span><span>Chemistry</span>
+          <span style="color:var(--dim);letter-spacing:.1em">MINOR</span><span>Computer Science</span>
+          <span style="color:var(--dim);letter-spacing:.1em">RESEARCH</span><span>Information Retrieval — RAG, BM25, TREC, ECIR'26</span>
+          <span style="color:var(--dim);letter-spacing:.1em">CLUBS</span><span>President · Slashdot &nbsp;|&nbsp; Office Bearer · Valence</span>
+          <span style="color:var(--dim);letter-spacing:.1em">WEB</span><span style="color:var(--green)">github.com/Shuvam-Banerji-Seal</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <ul class="dots">
+        <li>I study <b>chemistry</b>, I code for a living, I research <b>retrieval</b>.</li>
+        <li>I teach tools for fun — like this talk.</li>
+        <li>Everything I show you, <b>I use daily</b>.</li>
+      </ul>
+      <div class="fieldnote amber">
+        <b style="color:var(--amber)">Why listen?</b> Because I'm not selling you a course. I'm showing you what's already on my desk.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 16: INFORMATION STORAGE ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 05.3</span> WHERE INFORMATION LIVES — YOU TELL ME</div>
+  <h2 class="title">How is information stored<br>in this <em>digital era</em>?</h2>
+  
+  <div class="three-col" style="margin-top:30px">
+    <div class="card" style="text-align:center;padding:30px 18px">
+      <div style="height:48px;display:flex;align-items:center;justify-content:center;margin-bottom:14px">
+        <img src="assets/img/youtube.png" style="height:40px;opacity:.9" alt="video">
+      </div>
+      <div style="font-family:'Space Grotesk';font-size:24px;font-weight:600">Video</div>
+      <div style="margin-top:14px;height:6px;background:rgba(255,255,255,.05);position:relative">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:95%;background:var(--red)"></div>
+      </div>
+      <div style="font-size:13px;color:var(--muted);margin-top:8px">most of the bytes</div>
+    </div>
+    <div class="card" style="text-align:center;padding:30px 18px">
+      <div style="height:48px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;font-size:40px">📷</div>
+      <div style="font-family:'Space Grotesk';font-size:24px;font-weight:600">Photos</div>
+      <div style="margin-top:14px;height:6px;background:rgba(255,255,255,.05);position:relative">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:60%;background:var(--amber)"></div>
+      </div>
+      <div style="font-size:13px;color:var(--muted);margin-top:8px">many bytes</div>
+    </div>
+    <div class="card" style="text-align:center;padding:30px 18px;border-color:var(--border);background:rgba(126,231,135,.03)">
+      <div style="height:48px;display:flex;align-items:center;justify-content:center;margin-bottom:14px">
+        <img src="assets/img/wikipedia.png" style="height:34px;opacity:.9" alt="text">
+      </div>
+      <div style="font-family:'Space Grotesk';font-size:24px;font-weight:600;color:var(--green)">Text</div>
+      <div style="margin-top:14px;height:6px;background:rgba(255,255,255,.05);position:relative">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:8%;background:var(--green)"></div>
+      </div>
+      <div style="font-size:13px;color:var(--green);margin-top:8px">few bytes — <b>most value</b></div>
+    </div>
+  </div>
+  
+  <div class="fieldnote" style="margin-top:30px;text-align:center">
+    Out of the three — <b style="color:var(--green)">text</b> is the one that constitutes all these services and softwares.
+  </div>
+</section>
+
+<!-- ========== SLIDE 17: IT'S ALL TEXT ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 05.4</span> IT'S ALL TEXT — THE UNIVERSAL INTERFACE</div>
+  <h1 class="display" style="font-size:clamp(80px,12vw,180px);line-height:.9">TEXT.</h1>
+  
+  <div class="two-col" style="margin-top:30px">
+    <div>
+      <ul class="dots">
+        <li>Out of video, photos and text — which one runs every service?</li>
+        <li><b>Text.</b> Text is the <b>universal interface</b>.</li>
+        <li>Google? A text-index of the web.</li>
+        <li>Your bank? Text rows in a database.</li>
+        <li><b>LLMs eat text. Agents act on text.</b></li>
+      </ul>
+    </div>
+    <div style="display:flex;justify-content:center;flex-direction:column;gap:18px;align-items:center">
+      <div class="meme-card tilt-l" style="max-width:280px"><img src="assets/img/meme_samepicture.png" alt="video, photos — text? they're the same picture"></div>
+      <div class="meme-card tilt-r" style="max-width:280px"><img src="assets/img/meme_alwayshasbeen.png" alt="wait, it's all text? always has been"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 18: KNOWLEDGE COMPRESSION ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 06</span> KNOWLEDGE COMPRESSION — THE LIBRARY IN A FILE</div>
+  <h2 class="title">LLMs = human knowledge,<br><em>compressed</em> into a model.</h2>
+  
+  <div class="step" style="display:flex;justify-content:center;margin:24px 0">
+    <svg viewBox="0 0 1000 220" style="width:100%;max-width:1080px">
+      <!-- Library -->
+      <rect x="20" y="60" width="160" height="120" fill="rgba(255,123,114,0.06)" stroke="var(--red)" stroke-width="1.5"/>
+      <text x="100" y="50" text-anchor="middle" font-size="13" fill="var(--red)" font-family="Space Grotesk" font-weight="600">HUMAN KNOWLEDGE</text>
+      <text x="100" y="115" text-anchor="middle" font-size="10" fill="var(--muted)">books</text>
+      <text x="100" y="130" text-anchor="middle" font-size="10" fill="var(--muted)">papers</text>
+      <text x="100" y="145" text-anchor="middle" font-size="10" fill="var(--muted)">web</text>
+      <text x="100" y="160" text-anchor="middle" font-size="10" fill="var(--muted)">code</text>
+      
+      <!-- Arrow 1: train = compress -->
+      <line x1="195" y1="120" x2="305" y2="120" stroke="var(--green)" stroke-width="2" marker-end="url(#ag1)"/>
+      <defs>
+        <marker id="ag1" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="var(--green)"/>
+        </marker>
+      </defs>
+      <text x="250" y="105" text-anchor="middle" font-size="10" fill="var(--green)" font-family="Caveat" font-style="italic" font-size="14">train = compress</text>
+      <text x="250" y="140" text-anchor="middle" font-size="9" fill="var(--muted)">next-token prediction</text>
+      
+      <!-- Model -->
+      <rect x="320" y="60" width="160" height="120" fill="rgba(126,231,135,0.08)" stroke="var(--green)" stroke-width="1.5"/>
+      <text x="400" y="50" text-anchor="middle" font-size="13" fill="var(--green)" font-family="Space Grotesk" font-weight="600">THE MODEL</text>
+      <text x="400" y="115" text-anchor="middle" font-size="10" fill="var(--muted)">weights:</text>
+      <text x="400" y="132" text-anchor="middle" font-size="11" fill="var(--fg)" font-family="JetBrains Mono">a few GB</text>
+      <text x="400" y="150" text-anchor="middle" font-size="10" fill="var(--muted)">of numbers</text>
+      
+      <!-- Arrow 2: decode -->
+      <line x1="495" y1="120" x2="605" y2="120" stroke="var(--amber)" stroke-width="2" marker-end="url(#ag2)"/>
+      <defs>
+        <marker id="ag2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="var(--amber)"/>
+        </marker>
+      </defs>
+      <text x="550" y="105" text-anchor="middle" font-size="10" fill="var(--amber)" font-family="Caveat" font-style="italic" font-size="14">decode</text>
+      
+      <!-- Tokens -->
+      <rect x="620" y="60" width="220" height="120" fill="rgba(255,166,87,0.06)" stroke="var(--amber)" stroke-width="1.5"/>
+      <text x="730" y="50" text-anchor="middle" font-size="13" fill="var(--amber)" font-family="Space Grotesk" font-weight="600">TOKENS</text>
+      <text x="730" y="125" text-anchor="middle" font-size="13" fill="var(--fg)" font-family="JetBrains Mono">"The cat sat on..."</text>
+      <text x="730" y="148" text-anchor="middle" font-size="9" fill="var(--muted)">token by token</text>
+      
+      <!-- Caption -->
+      <text x="500" y="205" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="Caveat" font-style="italic" font-size="14">A whole library, compressed into one file — that predicts the next word.</text>
+    </svg>
+  </div>
+</section>
+
+<!-- ========== SLIDE 19: THE DISTRIBUTION ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 06.2</span> THE DISTRIBUTION OF THE NEXT TOKEN</div>
+  <h2 class="title">A Gaussian.<br>Or maybe a <em>Poisson</em>.</h2>
+  
+  <div class="two-col">
+    <div style="display:flex;justify-content:center">
+      <svg viewBox="0 0 420 280" class="diagram" style="max-width:440px">
+        <!-- Axes -->
+        <line x1="40" y1="240" x2="400" y2="240" stroke="var(--dim)" stroke-width="1.2"/>
+        <line x1="40" y1="240" x2="40" y2="30" stroke="var(--dim)" stroke-width="1.2"/>
+        <text x="220" y="265" text-anchor="middle" font-size="10" fill="var(--muted)">token candidates →</text>
+        <text x="20" y="135" font-size="10" fill="var(--muted)" transform="rotate(-90 20 135)">probability</text>
+        
+        <!-- Distribution curve -->
+        <path d="M 50 240 Q 90 240 130 220 Q 170 180 200 80 Q 230 180 270 220 Q 310 240 350 240 L 390 240" 
+              fill="rgba(126,231,135,0.12)" stroke="var(--green)" stroke-width="2"/>
+        
+        <!-- Peak marker -->
+        <line x1="200" y1="80" x2="200" y2="240" stroke="var(--green)" stroke-width="1" stroke-dasharray="2 3"/>
+        <circle cx="200" cy="80" r="4" fill="var(--green)"/>
+        <text x="200" y="68" text-anchor="middle" font-size="10" fill="var(--green)" font-family="Caveat" font-style="italic" font-size="14">most likely token</text>
+        
+        <!-- Side bumps -->
+        <text x="110" y="200" font-size="9" fill="var(--amber)" font-family="Caveat" font-style="italic" font-size="12">surprising but possible</text>
+        
+        <!-- Long tail annotation -->
+        <path d="M 320 235 Q 350 230 380 238" stroke="var(--red)" stroke-width="1" fill="none"/>
+        <text x="360" y="220" font-size="9" fill="var(--red)" font-family="Caveat" font-style="italic" font-size="12">Poisson-ish tail</text>
+        <text x="360" y="232" font-size="8" fill="var(--muted)">rare events, long tails</text>
+      </svg>
+    </div>
+    <div>
+      <p class="lead">The model is a <strong>probability distribution</strong> over the next token — your knowledge, your language, your style, compressed.</p>
+      
+      <div class="fieldnote">
+        <b>The honest math:</b><br>
+        <code style="font-size:15px;background:transparent;border:none;color:var(--green);padding:0">p(wₜ | w&lt;ₜ)</code>
+        <br><br>
+        <span style="font-size:14px;color:var(--muted)">That's it. That's the whole game.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 20: TOO MUCH MATHS ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 06.3</span> TOO MUCH MATHS?</div>
+  <h2 class="title">Okay — that was the <em>last</em> formula.</h2>
+  
+  <div class="two-col">
+    <div style="display:flex;justify-content:center;align-items:center;flex-direction:column">
+      <div class="meme-card tilt-l" style="max-width:340px"><img src="assets/img/meme_onedoesnotsimply.png" alt="one does not simply run a 7B LLM on a 4GB laptop"></div>
+    </div>
+    <div>
+      <ul class="dots">
+        <li>Don't worry — that was the <b>only</b> formula in this talk.</li>
+        <li>The takeaway is one line: <b>LLMs predict the next token.</b></li>
+        <li>And now that you know <b>text matters</b>...</li>
+        <li>let's get back to the <b style="color:var(--green)">tools</b>.</li>
+      </ul>
+      
+      <div style="margin-top:24px;font-family:'Caveat';font-size:22px;color:var(--amber)">
+        ← enough theory. tools now.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 21: GIT & PERSONAL WEBSITE ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 07</span> TOOLS YOU SHOULD LEARN — GIT &amp; FRIENDS</div>
+  <h2 class="title">Hands up — who has a<br><em>personal website</em>?</h2>
+  
+  <div class="two-col">
+    <div>
+      <p class="lead" style="margin-bottom:18px">Want one? Host it <strong>free</strong> on:</p>
+      <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+        <span class="logo-chip"><img src="assets/img/github.png" alt="">GitHub</span>
+        <span class="logo-chip"><img src="assets/img/gitlab.png" alt="">GitLab</span>
+        <span class="logo-chip"><img src="assets/img/codeberg.png" alt="">Codeberg</span>
+      </div>
+      <p class="lead">Underlying tool: <code>git</code>.<br><strong>You need to learn git.</strong></p>
+      
+      <div class="fieldnote" style="margin-top:18px">
+        <span style="font-family:'Caveat';font-size:17px;color:var(--amber)">xkcd 2347 — Dependency</span><br>
+        <span style="font-size:14px;color:var(--muted)">Everyone runs on git, eventually.</span>
+      </div>
+    </div>
+    <div>
+      <div class="terminal">
+        <span class="ln dim"># your first repo</span>
+        <span class="ln prompt">git init</span>
+        <span class="ln prompt">git add .</span>
+        <span class="ln prompt">git commit -m <em>"my first website"</em></span>
+        <span class="ln prompt">git push origin main</span>
+        <span class="ln dim"></span>
+        <span class="ln ok"><b>Initialized</b> empty Git repo</span>
+        <span class="ln ok"><b>3 files</b> staged</span>
+        <span class="ln ok"><b>main</b> → origin (4 commits ahead)</span>
+      </div>
+      <div style="margin-top:16px;display:flex;justify-content:center">
+        <div class="meme-card" style="max-width:150px"><img src="assets/img/xkcd_dependency.png" alt="xkcd 2347 — dependency"></div>
+      </div>
+      <div style="margin-top:6px;text-align:center;font-size:12px;color:var(--muted)">xkcd 2347 — Dependency: everyone runs on git, eventually</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 22: LATEX & OVERLEAF ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 07.2</span> OVERLEAF &amp; LATEX — ASSIGNMENTS, THESIS, PROJECTS</div>
+  <h2 class="title">You type text + commands.<br>The machine <em>typesets beauty</em>.</h2>
+  
+  <div class="two-col">
+    <div>
+      <ul class="dots">
+        <li><b>PDFs</b>: assignments, thesis, projects — all LaTeX.</li>
+        <li>Overleaf = LaTeX in your browser, <b>zero install</b>.</li>
+        <li>Version control, collaboration, the works.</li>
+      </ul>
+      
+      <div class="fieldnote amber">
+        <b style="color:var(--amber)">FUN FACT →</b> Heck — even <b>this presentation</b> is made using LaTeX.<br><br>
+        You are literally reading <strong>typeset tokens</strong>.
+      </div>
+    </div>
+    <div>
+      <div class="terminal">
+        <span class="ln dim">% paper.tex</span>
+        <span class="ln"><span style="color:var(--purple)">\documentclass</span>{article}</span>
+        <span class="ln"><span style="color:var(--purple)">\usepackage</span>{amsmath}</span>
+        <span class="ln"><span style="color:var(--purple)">\begin</span>{document}</span>
+        <span class="ln"></span>
+        <span class="ln">The cat sat on the <span style="color:var(--purple)">\textbf</span>{mat}.</span>
+        <span class="ln"></span>
+        <span class="ln"><span style="color:var(--purple)">$$</span><span style="color:var(--green)">p(w_t \mid w_{&lt;t})</span><span style="color:var(--purple)">$$</span></span>
+        <span class="ln"></span>
+        <span class="ln"><span style="color:var(--purple)">\end</span>{document}</span>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px;justify-content:center">
+        <span class="logo-chip"><img src="assets/img/overleaf.png" alt="">Overleaf</span>
+        <span class="logo-chip"><img src="assets/img/latex.png" alt="">LaTeX</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 23: DO IT YOURSELF? ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 07.3</span> NOW THAT EVERYTHING IS TEXT</div>
+  <h2 class="title">Would you do it<br><em>by yourself</em>?</h2>
+  
+  <div class="two-col">
+    <div>
+      <p class="lead">So now I've asked you to build a <b>website</b> and write an <b>assignment</b>.</p>
+      <ul class="dots" style="margin-top:14px">
+        <li>Would you want to do it all by yourself?</li>
+        <li>Remember: <b>everything here is text</b>.</li>
+        <li>And text is exactly what <b>AI agents are good at</b>.</li>
+      </ul>
+      
+      <div class="fieldnote">
+        <b style="color:var(--green)">THE PITCH →</b> Use agentic tools — like the ones I'm about to show.
+      </div>
+    </div>
+    <div style="display:flex;justify-content:center;align-items:center">
+      <div class="meme-card tilt-l" style="max-width:340px"><img src="assets/img/meme_drake.png" alt="writing it yourself vs letting an AI agent do it"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 24: AGENTIC TOOLS ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 08</span> AGENTIC TOOLS — AI THAT ACTS, NOT JUST ANSWERS</div>
+  <h2 class="title">This isn't sci-fi.<br>This is a <em>Tuesday</em>.</h2>
+  
+  <div class="two-col">
+    <div>
+      <ul class="dots">
+        <li>Tools I use daily: <b>VS Code + agentic coding tools</b>.</li>
+        <li>Open-source, runnable locally: <b>OpenCode</b>, <b>Claude Code</b>, ...</li>
+        <li>They read your files, write code, run commands — <b>you supervise</b>.</li>
+        <li>This presentation? <b>Written by me with an agent.</b></li>
+      </ul>
+      
+      <div style="margin-top:18px;display:flex;flex-wrap:wrap;gap:8px">
+        <span class="logo-chip"><img src="assets/img/openai_w.png" alt="">OpenAI</span>
+        <span class="logo-chip"><img src="assets/img/chatgpt.png" alt="">ChatGPT</span>
+        <span class="logo-chip"><img src="assets/img/anthropic.png" alt="">Claude</span>
+        <span class="logo-chip"><img src="assets/img/googlegemini.png" alt="">Gemini</span>
+        <span class="logo-chip"><img src="assets/img/huggingface.png" alt="">HF</span>
+        <span class="logo-chip"><img src="assets/img/gnometerminal.png" alt="">shell</span>
+      </div>
+    </div>
+    <div>
+      <div class="terminal">
+        <span class="ln dim"># a session, roughly</span>
+        <span class="ln prompt">opencode</span>
+        <span class="ln in">write a python script that</span>
+        <span class="ln in">downloads all my course PDFs</span>
+        <span class="ln ok"><b>plan</b>: fetch, parse, save</span>
+        <span class="ln ok">wrote <em>downloads.py</em></span>
+        <span class="ln ok">ran it: <b>42 files saved</b></span>
+        <span class="ln prompt"><span class="cursor"></span></span>
+      </div>
+      <div style="margin-top:14px;font-family:'Caveat';font-size:20px;color:var(--green);text-align:right">
+        ← not sci-fi. this is a Tuesday.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 25: WHAT ARE AGENTIC TOOLS ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 08.2</span> THE DEFINITION — TOKENS BECOME COMMANDS</div>
+  <h2 class="title">What <em>are</em> agentic tools?</h2>
+  
+  <div class="step" style="display:flex;justify-content:center;margin:30px 0">
+    <svg viewBox="0 0 900 320" style="width:100%;max-width:960px">
+      <!-- LLM box -->
+      <rect x="40" y="100" width="220" height="120" fill="rgba(126,231,135,0.08)" stroke="var(--green)" stroke-width="2"/>
+      <text x="150" y="90" text-anchor="middle" font-size="14" fill="var(--green)" font-family="Space Grotesk" font-weight="700">LLM</text>
+      <text x="150" y="150" text-anchor="middle" font-size="11" fill="var(--muted)">generates tokens</text>
+      <text x="150" y="180" text-anchor="middle" font-size="11" fill="var(--fg)" font-family="Caveat" font-style="italic" font-size="15">tokens = words</text>
+      <text x="150" y="205" text-anchor="middle" font-size="11" fill="var(--amber)" font-family="Caveat" font-style="italic" font-size="15">tokens = commands</text>
+      
+      <!-- Arrow right -->
+      <line x1="265" y1="160" x2="365" y2="160" stroke="var(--amber)" stroke-width="2" marker-end="url(#ag3)"/>
+      <defs>
+        <marker id="ag3" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="var(--amber)"/>
+        </marker>
+        <marker id="ag4" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="var(--blue)"/>
+        </marker>
+      </defs>
+      <text x="315" y="148" text-anchor="middle" font-size="10" fill="var(--amber)" font-family="Caveat" font-style="italic" font-size="13">generates</text>
+      
+      <!-- Environment box -->
+      <rect x="380" y="100" width="220" height="120" fill="rgba(121,192,255,0.06)" stroke="var(--blue)" stroke-width="2"/>
+      <text x="490" y="90" text-anchor="middle" font-size="14" fill="var(--blue)" font-family="Space Grotesk" font-weight="700">ENVIRONMENT</text>
+      <text x="490" y="150" text-anchor="middle" font-size="11" fill="var(--muted)">runs the commands</text>
+      <text x="490" y="180" text-anchor="middle" font-size="11" fill="var(--fg)" font-family="Caveat" font-style="italic" font-size="15">executes →</text>
+      <text x="490" y="205" text-anchor="middle" font-size="11" fill="var(--blue)" font-family="Caveat" font-style="italic" font-size="15">returns output</text>
+      
+      <!-- Arrow back -->
+      <path d="M 490 220 Q 490 270 315 270 Q 150 270 150 220" stroke="var(--blue)" stroke-width="1.5" fill="none" stroke-dasharray="4 4" marker-end="url(#ag4)"/>
+      <text x="320" y="288" text-anchor="middle" font-size="10" fill="var(--blue)" font-family="Caveat" font-style="italic" font-size="13">feedback loop · the agent</text>
+      
+      <!-- Definition box -->
+      <rect x="650" y="80" width="220" height="160" fill="rgba(255,166,87,0.04)" stroke="var(--amber)" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <text x="760" y="70" text-anchor="middle" font-size="11" fill="var(--amber)" letter-spacing=".15em">DEFINITION</text>
+      <text x="760" y="110" text-anchor="middle" font-size="11" fill="var(--fg)">LLMs generate tokens</text>
+      <text x="760" y="128" text-anchor="middle" font-size="11" fill="var(--muted)">(words).</text>
+      <text x="760" y="155" text-anchor="middle" font-size="11" fill="var(--fg)">What if the token is a</text>
+      <text x="760" y="173" text-anchor="middle" font-size="11" fill="var(--green)" font-weight="600">command</text>
+      <text x="760" y="191" text-anchor="middle" font-size="11" fill="var(--muted)">— and the env executes it?</text>
+      <text x="760" y="220" text-anchor="middle" font-size="11" fill="var(--amber)" font-family="Space Grotesk" font-weight="700">That's an agent.</text>
+    </svg>
+  </div>
+</section>
+
+<!-- ========== SLIDE 26: CLOSING ========== -->
+<section class="slide">
+  <div class="grid-bg"></div>
+  <div class="kicker"><span class="num">§ END</span> QUESTIONS — EVERYTHING IS TEXT</div>
+  
+  <div class="two-col" style="margin-top:20px">
+    <div>
+      <div class="qmark">?</div>
+      <h2 class="title" style="margin-top:10px">Questions?</h2>
+      <p class="lead" style="margin-top:14px">
+        Everything is <strong>text</strong>.<br>
+        Agents turn <strong>text into action</strong>.
+      </p>
+    </div>
+    <div>
+      <div style="border:1px solid var(--border);padding:24px;background:rgba(255,255,255,.02)">
+        <div style="font-size:11px;color:var(--muted);letter-spacing:.2em;margin-bottom:14px">CONNECT · FOLLOW · READ</div>
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:12px 16px;font-size:15px">
+          <span style="color:var(--dim)">GitHub</span><span style="color:var(--green)">github.com/Shuvam-Banerji-Seal</span>
+          <span style="color:var(--dim)">Web</span><span style="color:var(--green)">shuvam-banerji-seal.github.io</span>
+          <span style="color:var(--dim)">Talk</span><span style="color:var(--fg)">AI in Current World Context</span>
+          <span style="color:var(--dim)">Date</span><span style="color:var(--fg)">August 2026 · IISER Kolkata</span>
+        </div>
+      </div>
+      
+      <div class="fieldnote" style="margin-top:20px">
+        <b style="color:var(--green)">REMEMBER →</b><br>
+        Learn the <b>leverage tools</b> first (git, LaTeX, terminal).<br>
+        Then let <b>agents</b> do the typing for you.<br>
+        <span style="font-family:'Caveat';font-size:20px;color:var(--amber);display:block;margin-top:8px">— that's the whole talk.</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="deco-corner deco-bl">EOF · 26/26</div>
+</section>
+
+</div>
+
+<!-- HUD -->
+<div id="hud">
+  <button class="nav-btn" id="prev" title="previous (←)">←</button>
+  <div class="counter"><b id="cur">01</b> / <span id="tot">26</span></div>
+  <button class="nav-btn" id="next" title="next (→ / space)">→</button>
+  <button class="nav-btn" id="helpbtn" title="keyboard shortcuts (?)">?</button>
+</div>
+
+<script>
+(function(){
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total = slides.length;
+  const STEP_SEL = 'ul.dots > li, .opt, .prob-bar, .fieldnote, .terminal, .tool-grid, .papers, .meme-card, .card, .bignum, .step';
+  const isTitle = i => i === 0;   // title slide renders fully, no steps
+
+  let idx = 0, step = 0;
+
+  const cur = document.getElementById('cur');
+  const tot = document.getElementById('tot');
+  const prev = document.getElementById('prev');
+  const next = document.getElementById('next');
+  const prog = document.getElementById('progress');
+  const deck = document.getElementById('deck');
+
+  tot.textContent = String(total).padStart(2,'0');
+
+  function steps(i){ return isTitle(i) ? [] : Array.from(slides[i].querySelectorAll(STEP_SEL)); }
+
+  function render(){
+    slides.forEach((s,i)=>{
+      s.classList.remove('active','prev');
+      if(i<idx) s.classList.add('prev');
+      else if(i===idx) s.classList.add('active');
+      const st = steps(i);
+      st.forEach((el,j)=>{ el.classList.toggle('revealed', i===idx && j<=step); });
+    });
+    cur.textContent = String(idx+1).padStart(2,'0');
+    prog.style.width = ((idx+1)/total*100)+'%';
+    prev.disabled = idx===0 && step===0;
+    document.querySelectorAll('#overview button').forEach((b,i)=>{ b.classList.toggle('cur', i===idx); });
+  }
+
+  function go(n){ idx = Math.max(0, Math.min(total-1, n)); step = 0; render(); }
+
+  function nextStep(){
+    const st = steps(idx);
+    if(step < st.length-1){ step++; render(); }
+    else if(idx < total-1){ idx++; step = 0; render(); }
+  }
+  function prevStep(){
+    if(step > 0){ step--; render(); }
+    else if(idx > 0){ idx--; const st = steps(idx); step = Math.max(0, st.length-1); render(); }
+  }
+
+  // ---- pointer: click right side = next, left side = back ----
+  deck.addEventListener('click', e=>{
+    if(e.target.closest('#hud') || e.target.closest('a') || e.target.closest('#overview')) return;
+    if(e.clientX < window.innerWidth*0.22){ prevStep(); } else { nextStep(); }
+  });
+
+  prev.addEventListener('click', e=>{ e.stopPropagation(); prevStep(); });
+  next.addEventListener('click', e=>{ e.stopPropagation(); nextStep(); });
+
+  // ---- overview grid ----
+  const ov = document.createElement('div');
+  ov.id = 'overview';
+  ov.innerHTML = slides.map((s,i)=>{
+    const t = (s.querySelector('h1.display, h2.title')||{}).textContent
+           || (s.querySelector('.kicker')||{}).textContent
+           || ('Slide '+(i+1));
+    return '<button data-i="'+i+'"><span class="n">'+String(i+1).padStart(2,'0')+'</span>'+t.replace(/\s+/g,' ').trim()+'</button>';
+  }).join('');
+  ov.addEventListener('click', e=>{
+    const b = e.target.closest('button');
+    if(b){ go(+b.dataset.i); ov.classList.remove('open'); }
+  });
+  document.body.appendChild(ov);
+  function toggleOverview(){ ov.classList.toggle('open'); render(); }
+
+  // ---- help overlay ----
+  const help = document.createElement('div');
+  help.id = 'help';
+  help.innerHTML =
+    '<div class="box">'+
+    '<h4>keyboard · pointer</h4>'+
+    '<div class="r"><span>Next point / slide</span><kbd>→ · Space · PgDn · N</kbd></div>'+
+    '<div class="r"><span>Previous point / slide</span><kbd>← · PgUp · P</kbd></div>'+
+    '<div class="r"><span>First / last slide</span><kbd>Home · End</kbd></div>'+
+    '<div class="r"><span>Click right side → next · left side → back</span><kbd>click</kbd></div>'+
+    '<div class="r"><span>Jump to a slide</span><kbd>type 1–26</kbd></div>'+
+    '<div class="r"><span>Overview grid</span><kbd>O</kbd></div>'+
+    '<div class="r"><span>Fullscreen</span><kbd>F</kbd></div>'+
+    '<div class="r"><span>This help</span><kbd>?</kbd></div>'+
+    '<div class="close">Esc closes overview / help</div>'+
+    '</div>';
+  document.body.appendChild(help);
+  function toggleHelp(){ help.classList.toggle('open'); }
+  function closeOverlays(){ ov.classList.remove('open'); help.classList.remove('open'); }
+  document.getElementById('helpbtn').addEventListener('click', e=>{ e.stopPropagation(); toggleHelp(); });
+
+  // ---- keyboard ----
+  let jbuf = '', jt = null;
+  function jumpTo(){
+    const n = parseInt(jbuf,10);
+    if(!isNaN(n) && n>=1 && n<=total) go(n-1);
+    jbuf = '';
+  }
+  document.addEventListener('keydown', e=>{
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'||e.key==='n'||e.key==='.'){ e.preventDefault(); nextStep(); }
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'||e.key==='p'||e.key===','){ e.preventDefault(); prevStep(); }
+    else if(e.key==='Home'){ go(0); }
+    else if(e.key==='End'){ go(total-1); }
+    else if(e.key==='f'||e.key==='F'){ toggleFullscreen(); }
+    else if(e.key==='o'||e.key==='O'){ toggleOverview(); }
+    else if(e.key==='?'||e.key==='/'){ toggleHelp(); }
+    else if(e.key==='Escape'){ closeOverlays(); }
+    else if(/^[0-9]$/.test(e.key)){ jbuf += e.key; clearTimeout(jt); jt = setTimeout(jumpTo, 800); }
+    else if(e.key==='Enter'){ if(jbuf){ jumpTo(); } }
+  });
+
+  function toggleFullscreen(){
+    if(document.fullscreenElement){ document.exitFullscreen(); }
+    else if(document.documentElement.requestFullscreen){ document.documentElement.requestFullscreen().catch(function(){}); }
+  }
+
+  // ---- touch swipe ----
+  let touchX = null;
+  document.addEventListener('touchstart', e=>{ touchX = e.touches[0].clientX; });
+  document.addEventListener('touchend', e=>{
+    if(touchX===null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if(Math.abs(dx) > 50){ if(dx<0) nextStep(); else prevStep(); }
+    touchX = null;
+  });
+
+  go(0);
+})();
+</script>
+
+</body>
+</html>

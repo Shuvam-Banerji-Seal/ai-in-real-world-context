@@ -1,0 +1,68 @@
+% =============================================================================
+% SECTION 2 -- THE AGENDA: the room, mapped
+% =============================================================================
+
+\section{The Agenda}
+\subsection{Reading the Room}
+
+% ---------------------------------------------------------------------------
+% 2.1  the venn diagram of knowing
+% ---------------------------------------------------------------------------
+\begin{frame}{The room, mapped}{three circles of knowing}
+    \begin{center}
+        \begin{tikzpicture}
+            % outer ring: unknown unknowns (static)
+            \draw[softgray,very thick] (0,0) circle (2.5);
+            \node[text=softgray,font=\small] at (0,3.0) {things I don't know that I don't know};
+
+            % middle ring: known unknowns (grows while you are here)
+            \def\kr{1.0}
+            \only<2->{\def\kr{1.75}}
+            \draw[accentcyan,very thick] (0,0) circle (\kr);
+            \node[text=accentcyan,font=\small] at (1.6,1.25) {things I know};
+            \node[text=accentcyan,font=\small] at (2.05,0.9) {I don't know};
+
+            % core: known knowns
+            \draw[neongreen,very thick] (0,0) circle (0.55);
+            \node[text=neongreen,font=\small,align=center] at (0,0) {things\\[0.05em] I know};
+
+            % side annotations
+            \only<2->{\node[text=accentcyan,font=\footnotesize,align=center] at (-4.7,0.35) {while you're\\[0.05em] here $\rightarrow$};}
+            \only<3->{\node[text=neongreen,font=\footnotesize,align=center] at (4.7,0.35) {$\leftarrow$ when you\\[0.05em] go home};}
+        \end{tikzpicture}
+    \end{center}
+    \onslide<2->{\begin{center}{\small\color{fgwhite}Objective: increase the area of \glow{things you know you don't know}.}\end{center}}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% 2.2  the premonition + goal 1
+% ---------------------------------------------------------------------------
+\subsection{The Goal}
+
+\begin{frame}{I had a premonition}{and it was about tools}
+    \begin{columns}
+        \begin{column}{0.38\textwidth}
+            \begin{center}
+                \begin{tikzpicture}
+                    \shade[ball color=accentcyan!70!black] (0,0) circle (1.4);
+                    \node[text=bgblack,font=\bfseries\large] at (0,0.15) {tools};
+                    \draw[accentcyan,thick] (-1.7,-1.4) -- (1.7,-1.4);
+                    \draw[accentcyan,thick] (-1.2,-1.8) -- (1.2,-1.8);
+                    \foreach \a in {25,75,130,215,290,340} {
+                        \draw[neonyellow,thick] (\a:1.75) -- (\a:2.15);
+                    }
+                \end{tikzpicture}
+            \end{center}
+        \end{column}
+        \begin{column}{0.6\textwidth}
+            \begin{itemize}[<+->]
+                \item The audience wants \glow[neonyellow]{tools}, not theory.
+                \item I got the premonition.
+                \item And the agenda wrote itself:
+            \end{itemize}
+            \onslide<4->{\begin{successbox}[Goal \#1]
+                {\small In the next \textbf{1 hour}, you will learn about tools.}
+            \end{successbox}}
+        \end{column}
+    \end{columns}
+\end{frame}

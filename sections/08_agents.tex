@@ -1,0 +1,73 @@
+% =============================================================================
+% SECTION 8 -- AGENTIC TOOLS
+% =============================================================================
+
+\section{Agentic Tools}
+\subsection{Use Agentic Tools}
+
+% ---------------------------------------------------------------------------
+% 8.1  use agentic tools
+% ---------------------------------------------------------------------------
+\begin{frame}{Use agentic tools}{AI that acts, not just answers}
+    \begin{columns}
+        \begin{column}{0.48\textwidth}
+            \begin{itemize}[<+->]
+                \item Tools I use daily: \glow{VS Code} + \glow{agentic coding tools}.
+                \item Open-source, runnable locally: OpenCode, Claude Code, \ldots
+                \item They read your files, write code, run commands --- you \glow[neongreen]{supervise}.
+                \item This presentation? Written by me \glow{with} an agent.
+            \end{itemize}
+            \onslide<5->{\begin{center}
+                \begin{tabular}{cccccc}
+                    \logopic[0.6cm]{openai_w} & \logopic[0.6cm]{chatgpt} & \logopic[0.6cm]{anthropic} & \logopic[0.6cm]{googlegemini} & \logopic[0.6cm]{huggingface} & \logopic[0.6cm]{gnometerminal}\\[0.1em]
+                    {\tiny OpenAI} & {\tiny ChatGPT} & {\tiny Claude} & {\tiny Gemini} & {\tiny HF} & {\tiny shell}\\
+                \end{tabular}
+            \end{center}}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{tcolorbox}[darkstyle,title={\tiny a session, roughly}]
+                {\ttfamily\tiny
+                \textcolor{neongreen}{\$} opencode\\[-0.15em]
+                \textcolor{softgray}{>>} write a python script that\\[-0.15em]
+                \textcolor{softgray}{>>} downloads all my course PDFs\\[-0.15em]
+                \textcolor{neongreen}{$\checkmark$} plan: fetch, parse, save\\[-0.15em]
+                \textcolor{neongreen}{$\checkmark$} wrote downloads.py\\[-0.15em]
+                \textcolor{neongreen}{$\checkmark$} ran it: 42 files saved\\[-0.15em]
+                \textcolor{neongreen}{\$} \;}
+            \end{tcolorbox}
+            \onslide<3->{\begin{center}{\tiny\color{softgray}not sci-fi --- this is a Tuesday.}\end{center}}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% 8.2  what are agentic tools? (the definition)
+% ---------------------------------------------------------------------------
+\subsection{The Definition}
+
+\begin{frame}{What are agentic tools?}{tokens become commands}
+    \begin{center}
+        \begin{tikzpicture}
+            % LLM
+            \node[draw=neonyellow,very thick,rounded corners,fill=darkgray,text=neonyellow,align=center,
+                  font=\small,minimum width=3.4cm,minimum height=2.0cm] (llm) at (0,0)
+                  {LLM\\[0.15em] {\tiny generates tokens}};
+            % environment
+            \node[draw=neongreen,very thick,rounded corners,fill=darkgray,text=neongreen,align=center,
+                  font=\small,minimum width=3.4cm,minimum height=2.0cm] (env) at (5.8,0)
+                  {Environment\\[0.15em] {\tiny runs the commands}};
+            % arrows
+            \draw[-{Stealth},very thick,accentcyan] (2.0,0.45) -- node[above,font=\footnotesize]{tokens = words}(3.8,0.45);
+            \draw[-{Stealth},very thick,neongreen] (3.8,-0.45) -- node[below,font=\footnotesize]{tokens = commands}(2.0,-0.45);
+            % loop back
+            \draw[-{Stealth},thick,softgray] (env.south) -- node[below,font=\tiny]{executes $\rightarrow$ returns output}(5.8,-1.6) -- (0,-1.6) -- (llm.south);
+        \end{tikzpicture}
+    \end{center}
+    \vspace{0.25cm}
+    \pause
+    \begin{center}
+        {\small \glow{LLMs generate tokens (words).} What if the token is a \glow[neongreen]{command} ---\\
+        and the environment it runs in \glow[neongreen]{executes the command} as well?\\[0.3em]
+        That's an \glow{agentic tool}.}
+    \end{center}
+\end{frame}

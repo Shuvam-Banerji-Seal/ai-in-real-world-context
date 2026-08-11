@@ -1,0 +1,94 @@
+% =============================================================================
+% AI in Real World Context  --  Shuvam Banerji Seal
+% Compile:  pdflatex -shell-escape main.tex   (run twice for the TOC)
+% Theme:    sbs_dark_beamer.sty
+% Structure: one file per group of slides inside sections/
+% =============================================================================
+\documentclass[aspectratio=169]{beamer}
+
+\usepackage{sbs_dark_beamer}
+\usepackage[normalem]{ulem}
+
+\usetikzlibrary{arrows.meta,matrix,positioning,shapes.geometric,fit,decorations.pathreplacing}
+
+% ---- helpers ---------------------------------------------------------------
+% \logopic[height]{name} : include a logo from assets/img/
+\newcommand{\logopic}[2][1.0cm]{\includegraphics[height=#1]{assets/img/#2.png}}
+
+% \strikeout{text} : strike a word through its middle (replaces ulem's \sout)
+\newcommand{\strikeout}[2][neonpink]{%
+    \tikz[baseline=(X.base)]{%
+        \node[text=#1] (X) {#2};%
+        \draw[#1,line width=1.2pt]
+            ([yshift=0.22em]X.south west) -- ([yshift=0.22em]X.south east);%
+    }%
+}
+
+% the theme auto-inserts a "subsection page" frame; we curate our own frames
+\AtBeginSubsection{}
+
+% =============================================================================
+% METADATA
+% =============================================================================
+\title[AI in Current World Context]{AI in Real World Context}
+\subtitle{A 60-minute field guide to tools, services and next-token predictors}
+\date[Aug 2026]{August 2026}
+\addauthor{Shuvam Banerji Seal}{BS--MS final year, IISER Kolkata}{github.com/Shuvam-Banerji-Seal}
+
+\begin{document}
+
+% ---------------------------------------------------------------------------
+% TITLE SLIDE
+% ---------------------------------------------------------------------------
+\maketitle
+
+% ---------------------------------------------------------------------------
+% CONTENTS (two columns)
+% ---------------------------------------------------------------------------
+\begin{frame}{Contents}
+    \begin{multicols}{2}
+        \small
+        \tableofcontents[subsectionstyle=show/show/show]
+    \end{multicols}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% SECTIONS (each is its own file -> modular editing)
+% ---------------------------------------------------------------------------
+\input{sections/01_prologue.tex}      % title-question, Real -> Current
+\input{sections/02_agenda.tex}        % venn diagram, the goal
+\input{sections/03_tooltime.tex}      % what kind of tools, are they AI?
+\input{sections/04_ailandscape.tex}   % umbrella, next-token, lens, axis, alignment
+\input{sections/05_fundamentals.tex}  % services, about me, storage, all text
+\input{sections/06_knowledge.tex}     % compression, distribution, too much math
+\input{sections/07_tools.tex}         % git, latex, do it yourself?
+\input{sections/08_agents.tex}        % agentic tools
+
+% ---------------------------------------------------------------------------
+% CLOSING SLIDE
+% ---------------------------------------------------------------------------
+\begin{frame}[plain]
+    \begin{tikzpicture}[remember picture,overlay]
+        \shade[top color=bgdark,bottom color=bgblack]
+            (current page.north west) rectangle (current page.south east);
+        \shade[left color=accentcyan,right color=neonpink]
+            ([yshift=-0.8cm]current page.north west) rectangle +(\paperwidth,2pt);
+    \end{tikzpicture}
+    \vfill
+    \begin{center}
+        \glowtitle[accentcyan]{Questions?}
+        \vspace{0.4cm}
+        \dynamicsubtitle{Everything is text.}
+        \vspace{0.1cm}
+        \dynamicsubtitle{Agents turn text into action.}
+        \vspace{0.5cm}
+        {\small\color{softgray} github.com/Shuvam-Banerji-Seal $\cdot$ shuvam-banerji-seal.github.io}
+    \end{center}
+    \vfill
+    \begin{tikzpicture}[remember picture,overlay]
+        \shade[left color=neonpink,right color=accentcyan]
+            ([yshift=0.8cm]current page.south west) rectangle +(\paperwidth,2pt);
+    \end{tikzpicture}
+\end{frame}
+
+\end{document}

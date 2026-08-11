@@ -1,0 +1,35 @@
+# ---- LaTeX build artifacts ----
+*.aux
+*.log
+*.out
+*.toc
+*.nav
+*.snm
+*.vrb
+*.fls
+*.fdb_latexmakefile
+*.fdb_latexmk
+*.synctex.gz
+*.synctex(busy)
+*.bbl
+*.blg
+*.lof
+*.lot
+*.ilg
+*.ind
+*.idx
+*.run.xml
+main.pdf
+main.pdf_tex/
+
+# ---- editor / OS ----
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# ---- local junk / sync state ----
+--db-path
+assets/--db-path
+.olauth

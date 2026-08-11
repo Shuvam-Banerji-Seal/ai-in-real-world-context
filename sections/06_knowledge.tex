@@ -1,0 +1,92 @@
+% =============================================================================
+% SECTION 6 -- KNOWLEDGE COMPRESSION
+% =============================================================================
+
+\section{Knowledge Compression}
+\subsection{\texorpdfstring{Human Knowledge $\rightarrow$ Model}{Human Knowledge -> Model}}
+
+% ---------------------------------------------------------------------------
+% 6.1  LLMs = human knowledge, compressed
+% ---------------------------------------------------------------------------
+\begin{frame}{LLMs = human knowledge, compressed into a model}{the library in a file}
+    \begin{center}
+        \begin{tikzpicture}
+            % knowledge stack
+            \node[draw=neonyellow,rounded corners,fill=darkgray,text=neonyellow,align=center,
+                  font=\small,minimum width=3.2cm,minimum height=2.5cm] (k) at (0,0)
+                  {Human knowledge\\[0.15em] {\tiny books $\cdot$ papers $\cdot$ web $\cdot$ code}};
+            % compress arrow
+            \draw[-{Stealth},very thick,accentcyan] (1.8,0) -- node[above,font=\tiny]{train = compress}(3.3,0);
+            \node[text=accentcyan,font=\tiny] at (2.55,-0.6) {next-token prediction};
+            % model
+            \node[draw=neongreen,very thick,rounded corners,fill=darkgray,text=neongreen,align=center,
+                  font=\small,minimum width=3.2cm,minimum height=2.5cm] (m) at (5.3,0)
+                  {The model\\[0.15em] {\tiny weights: a few GB of numbers}};
+            % decode arrow
+            \draw[-{Stealth},very thick,accentcyan] (7.1,0) -- node[above,font=\tiny]{decode}(8.6,0);
+            % tokens out
+            \node[draw=fgwhite,rounded corners,fill=darkgray,text=fgwhite,align=center,
+                  font=\small,minimum width=3.2cm,minimum height=2.5cm] (t) at (10.4,0)
+                  {Tokens\\[0.15em] {\tiny ``The cat sat on\ldots''}};
+        \end{tikzpicture}
+    \end{center}
+    \vspace{0.25cm}
+    {\small A whole library, compressed into one file --- that predicts the next word.}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% 6.2  the distribution of the next token
+% ---------------------------------------------------------------------------
+\subsection{The Distribution}
+
+\begin{frame}{The distribution of the next token}{a Gaussian (or maybe a Poisson)}
+    \begin{center}
+        \begin{tikzpicture}
+            % axis
+            \draw[fgwhite,thick] (-4.0,0) -- (4.0,0);
+            % shaded tail (surprising tokens)
+            \fill[accentcyan,opacity=0.15]
+                plot[domain=-3.6:-1.1,smooth,samples=60] (\x,{2.4*exp(-0.5*\x*\x)})
+                -- (-1.1,0) -- (-3.6,0) -- cycle;
+            % gaussian
+            \draw[accentcyan,very thick,domain=-3.6:3.6,smooth,samples=100]
+                plot (\x,{2.4*exp(-0.5*\x*\x)});
+            % mode
+            \draw[dashed,neonyellow,thick] (0,0) -- (0,2.4);
+            \node[text=neonyellow,font=\footnotesize] at (0,2.75) {most likely token};
+            \node[text=softgray,font=\footnotesize] at (1.95,1.0) {surprising but possible};
+            % poisson-ish curve
+            \draw[neongreen,thick,dashed,domain=-3.6:2.7,smooth,samples=100]
+                plot (\x,{1.5*exp(-0.5*((\x+1.4)/1.4)^2)*(1+0.3*(\x+1.4))});
+            \node[text=neongreen,font=\footnotesize] at (2.55,2.0) {sometimes Poisson-ish:};
+            \node[text=neongreen,font=\footnotesize] at (2.75,1.6) {rare events, long tails};
+            % axis label
+            \node[text=fgwhite,font=\footnotesize] at (-4.0,-0.35) {token candidates $\rightarrow$};
+        \end{tikzpicture}
+    \end{center}
+    \vspace{0.2cm}
+    {\small The model is a \glow{probability distribution} over the next token --- your knowledge, your language, your style, compressed.}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% 6.3  too much maths?
+% ---------------------------------------------------------------------------
+\subsection{Too Much Maths?}
+
+\begin{frame}{Too much maths?}{okay, that was the last formula}
+    \begin{columns}
+        \begin{column}{0.45\textwidth}
+            \begin{center}
+                \includegraphics[height=4.7cm]{assets/img/meme_onedoesnotsimply.png}
+            \end{center}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{itemize}[<+->]
+                \item Don't worry --- that was the only formula in this talk.
+                \item The takeaway is one line: \glow{LLMs predict the next token}.
+                \item And now that you know text matters\ldots
+                \item \glow[neongreen]{let's get back to the tools.}
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
