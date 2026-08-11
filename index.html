@@ -147,8 +147,8 @@
   .slide.active .lead,.slide.active h3.sub{animation:fadeUp .6s .3s both}
 
   /* Step reveal — points appear one by one (click / → / space) */
-  .step{opacity:0;transform:translateY(14px);transition:opacity .45s ease,transform .45s ease}
-  .step.revealed{opacity:1;transform:translateY(0)}
+  .step{opacity:0;transition:opacity .5s ease}
+  .step.revealed{opacity:1}
 
   /* Overview grid */
   #overview{position:fixed;inset:0;z-index:200;background:rgba(8,10,9,.96);backdrop-filter:blur(8px);display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;padding:7vh 6vw;overflow:auto;opacity:0;pointer-events:none;transition:opacity .3s}
@@ -1352,7 +1352,14 @@
 
   tot.textContent = String(total).padStart(2,'0');
 
-  function steps(i){ return isTitle(i) ? [] : Array.from(slides[i].querySelectorAll(STEP_SEL)); }
+  function steps(i){
+    if(isTitle(i)) return [];
+    return Array.from(slides[i].querySelectorAll(STEP_SEL)).map(function(el){
+      // mark it so the .step CSS actually hides it until revealed
+      if(!el.classList.contains('step')) el.classList.add('step');
+      return el;
+    });
+  }
 
   function render(){
     slides.forEach((s,i)=>{

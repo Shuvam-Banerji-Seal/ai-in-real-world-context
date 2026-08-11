@@ -33,6 +33,13 @@ minor), researching Information Retrieval (RAG, BM25, TREC, ECIR'26).
 Open `index.html` in any browser, or visit the live site:
 <https://shuvam-banerji-seal.github.io/ai-in-real-world-context/>
 
+### Read the compiled PDF
+
+A compiled copy of the LaTeX deck is committed to the repo:
+
+- [`main.pdf`](main.pdf) — also served at
+  <https://shuvam-banerji-seal.github.io/ai-in-real-world-context/main.pdf>
+
 ### Compile the LaTeX deck
 
 Requires a TeX distribution with `pygments` (used by `minted`) and the packages

@@ -19,7 +19,6 @@
 *.ind
 *.idx
 *.run.xml
-main.pdf
 main.pdf_tex/
 
 # ---- editor / OS ----
