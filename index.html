@@ -46,6 +46,8 @@
   #pips{display:flex;gap:4px;align-items:center}
   #pips i{width:6px;height:6px;border-radius:50%;background:var(--dim);display:block;transition:background .3s}
   #pips i.on{background:var(--green)}
+  #music.off{opacity:.3}
+  #music.off::after{content:"✕";position:absolute;font-size:10px;color:var(--red);top:1px;right:4px}
   .nav-btn{width:34px;height:34px;border:1px solid var(--border);background:rgba(0,0,0,.4);color:var(--fg);cursor:pointer;font-family:inherit;font-size:14px;transition:all .2s;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px)}
   .nav-btn:hover{border-color:var(--green);color:var(--green);background:rgba(126,231,135,.06)}
   .nav-btn:disabled{opacity:.25;cursor:not-allowed}
@@ -1318,12 +1320,16 @@
 
 </div>
 
+<!-- Background music: soft loop (volume low; unmute with the ♪ button or M) -->
+<audio id="bgm" loop preload="auto" src="assets/bgm/theme_of_tapion.mp3"></audio>
+
 <!-- HUD -->
 <div id="hud">
   <button class="nav-btn" id="prev" title="previous (←)">←</button>
   <div class="counter"><b id="cur">01</b> / <span id="tot">26</span></div>
   <div id="pips" title="points left on this slide"></div>
   <button class="nav-btn" id="next" title="next (→ / space)">→</button>
+  <button class="nav-btn" id="music" title="music on/off (M)">♪</button>
   <button class="nav-btn" id="helpbtn" title="keyboard shortcuts (?)">?</button>
 </div>
 
@@ -1445,6 +1451,7 @@
     else if(e.key==='End'){ go(total-1); }
     else if(e.key==='f'||e.key==='F'){ toggleFullscreen(); }
     else if(e.key==='o'||e.key==='O'){ toggleOverview(); }
+    else if(e.key==='m'||e.key==='M'){ toggleMusic(); }
     else if(e.key==='?'||e.key==='/'){ toggleHelp(); }
     else if(e.key==='Escape'){ closeOverlays(); }
     else if(/^[0-9]$/.test(e.key)){ jbuf += e.key; clearTimeout(jt); jt = setTimeout(jumpTo, 800); }
@@ -1454,6 +1461,31 @@
   function toggleFullscreen(){
     if(document.fullscreenElement){ document.exitFullscreen(); }
     else if(document.documentElement.requestFullscreen){ document.documentElement.requestFullscreen().catch(function(){}); }
+  }
+
+  // ---- soft looping background music ----
+  const bgm = document.getElementById('bgm');
+  const musicBtn = document.getElementById('music');
+  let musicOn = true;
+  function toggleMusic(){
+    if(!bgm) return;
+    musicOn = !musicOn;
+    if(musicOn){ bgm.volume = 0.15; bgm.play().catch(function(){}); musicBtn.classList.remove('off'); }
+    else { bgm.pause(); musicBtn.classList.add('off'); }
+  }
+  if(bgm){
+    bgm.volume = 0.15;
+    // autoplay is often blocked with sound — start on the first interaction
+    bgm.play().catch(function(){});
+    const unlock = function(){
+      bgm.volume = 0.15;
+      bgm.play().catch(function(){});
+      document.removeEventListener('click', unlock);
+      document.removeEventListener('keydown', unlock);
+    };
+    document.addEventListener('click', unlock);
+    document.addEventListener('keydown', unlock);
+    musicBtn.addEventListener('click', function(e){ e.stopPropagation(); e.currentTarget.blur(); toggleMusic(); });
   }
 
   // ---- touch swipe ----
