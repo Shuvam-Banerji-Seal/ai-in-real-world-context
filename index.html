@@ -179,6 +179,10 @@
   .compass3d .needle{animation:needleSpin 9s linear infinite;transform-box:view-box;transform-origin:120px 120px}
   @keyframes needleSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 
+  /* growing "known unknowns" ring on the alignment wall */
+  .grow-ring{animation:ringGrow 3.5s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}
+  @keyframes ringGrow{from{transform:scale(1)}to{transform:scale(2.3)}}
+
   
   /* Paper card grid */
   .papers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
@@ -277,7 +281,7 @@
 <section class="slide active">
   <div class="grid-bg"></div>
   <div class="deco-corner deco-tl">N 22.97° · E 88.51°</div>
-  <div class="deco-corner deco-tr">SESSION 01 / 26</div>
+  <div class="deco-corner deco-tr">SESSION 01 / 27</div>
   <div class="deco-corner deco-bl">EST. READING TIME · 60 MIN</div>
   
   <div class="kicker"><span class="num">§ 00</span> PROLOGUE — BOOT SEQUENCE</div>
@@ -807,12 +811,39 @@
     </div>
   </div>
   
-  <div class="fieldnote" style="margin-top:20px">
-    <b>Every paper is free on arXiv</b> — pick one, read it tonight.
+  <div style="margin-top:20px;display:flex;align-items:center;gap:28px;justify-content:space-between;flex-wrap:wrap">
+    <div class="fieldnote" style="margin-top:0;flex:1;min-width:300px">
+      <b>Every paper is free on arXiv</b> — pick one, read it tonight.
+    </div>
+    <div class="step" style="display:flex;flex-direction:column;align-items:center;gap:2px">
+      <svg viewBox="0 0 200 200" style="width:120px;height:120px">
+        <circle cx="100" cy="100" r="92" fill="none" stroke="var(--red)" stroke-width="1" stroke-dasharray="4 4" opacity="0.6"/>
+        <circle class="grow-ring" cx="100" cy="100" r="30" fill="rgba(255,166,87,0.12)" stroke="var(--amber)" stroke-width="1.5"/>
+        <circle cx="100" cy="100" r="18" fill="rgba(126,231,135,0.16)" stroke="var(--green)" stroke-width="1.5"/>
+        <text x="100" y="103" text-anchor="middle" font-size="8" fill="var(--green)">known</text>
+        <text x="100" y="42" text-anchor="middle" font-size="7" fill="var(--amber)">known unknowns</text>
+      </svg>
+      <div style="font-family:'Caveat';font-size:15px;color:var(--amber)">each paper grows this ring ↑</div>
+    </div>
   </div>
 </section>
 
-<!-- ========== SLIDE 14: SERVICES ========== -->
+<!-- ========== SLIDE 14: THE PAPER THAT STARTED THE FOURTH WAVE ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 04.6</span> THE FOURTH WAVE — ATTENTION IS ALL YOU NEED</div>
+  <h2 class="title">The paper that started this<br><em>fourth wave</em> of AI development.</h2>
+
+  <div class="step" style="display:flex;justify-content:center;margin-top:14px">
+    <div class="meme-card" style="max-width:760px;width:100%">
+      <img src="assets/img/attention_is_all_you_need.png" alt="Attention Is All You Need — Vaswani et al. 2017">
+    </div>
+  </div>
+  <div style="margin-top:12px;text-align:center;font-size:15px;color:var(--muted)">
+    Vaswani et al., 2017 — <b style="color:var(--green)">Attention Is All You Need</b> · arXiv:1706.03762
+  </div>
+</section>
+
+<!-- ========== SLIDE 15: SERVICES ========== -->
 <section class="slide">
   <div class="kicker"><span class="num">§ 05</span> FUNDAMENTALS — HOW YOU INTERACT WITH COMPUTERS</div>
   <h2 class="title">Spoiler: <em>services</em>.</h2>
@@ -1325,7 +1356,7 @@
     </div>
   </div>
   
-  <div class="deco-corner deco-bl">EOF · 26/26</div>
+  <div class="deco-corner deco-bl">EOF · 27/27</div>
 </section>
 
 </div>
