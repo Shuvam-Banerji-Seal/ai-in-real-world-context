@@ -1073,17 +1073,19 @@
         <text x="220" y="265" text-anchor="middle" font-size="13" fill="var(--muted)">token candidates →</text>
         <text x="20" y="135" font-size="13" fill="var(--muted)" transform="rotate(-90 20 135)">probability</text>
         
-        <!-- Distribution curve -->
-        <path d="M 50 240 Q 90 240 130 220 Q 170 180 200 80 Q 230 180 270 220 Q 310 240 350 240 L 390 240" 
+        <!-- Distribution curve (true Gaussian: y = 180·exp(-((x-220)²/2·70²)), baseline y=240) -->
+        <path d="M 40.0 233.4 L 49.0 230.9 L 58.0 227.6 L 67.0 223.5 L 76.0 218.3 L 85.0 212.0 L 94.0 204.4 L 103.0 195.5 L 112.0 185.3 L 121.0 173.8 L 130.0 161.2 L 139.0 147.8 L 148.0 133.9 L 157.0 119.9 L 166.0 106.3 L 175.0 93.6 L 184.0 82.3 L 193.0 72.9 L 202.0 65.9 L 211.0 61.5 L 220.0 60.0 L 229.0 61.5 L 238.0 65.9 L 247.0 72.9 L 256.0 82.3 L 265.0 93.6 L 274.0 106.3 L 283.0 119.9 L 292.0 133.9 L 301.0 147.8 L 310.0 161.2 L 319.0 173.8 L 328.0 185.3 L 337.0 195.5 L 346.0 204.4 L 355.0 212.0 L 364.0 218.3 L 373.0 223.5 L 382.0 227.6 L 391.0 230.9 L 400.0 233.4 L 400 240 L 40 240 Z"
               fill="rgba(126,231,135,0.12)" stroke="var(--green)" stroke-width="2"/>
         
-        <!-- Peak marker -->
-        <line x1="200" y1="80" x2="200" y2="240" stroke="var(--green)" stroke-width="1" stroke-dasharray="2 3"/>
-        <circle cx="200" cy="80" r="4" fill="var(--green)"/>
-        <text x="200" y="68" text-anchor="middle" font-size="13" fill="var(--green)" font-family="Caveat" font-style="italic" font-size="17">most likely token</text>
+        <!-- Peak marker (mean, symmetric) -->
+        <line x1="220" y1="60" x2="220" y2="240" stroke="var(--green)" stroke-width="1" stroke-dasharray="2 3"/>
+        <circle cx="220" cy="60" r="4" fill="var(--green)"/>
+        <text x="220" y="48" text-anchor="middle" font-size="13" fill="var(--green)" font-family="Caveat" font-style="italic" font-size="17">most likely token</text>
+        <text x="220" y="256" text-anchor="middle" font-size="12" fill="var(--muted)">μ</text>
         
         <!-- Side bumps -->
-        <text x="110" y="200" font-size="12" fill="var(--amber)" font-family="Caveat" font-style="italic" font-size="15">surprising but possible</text>
+        <text x="112" y="196" font-size="12" fill="var(--amber)" font-family="Caveat" font-style="italic" font-size="15">surprising but possible</text>
+        <text x="328" y="196" font-size="12" fill="var(--amber)" font-family="Caveat" font-style="italic" font-size="15">surprising but possible</text>
         
         <!-- Long tail annotation -->
         <path d="M 320 235 Q 350 230 380 238" stroke="var(--red)" stroke-width="1" fill="none"/>
