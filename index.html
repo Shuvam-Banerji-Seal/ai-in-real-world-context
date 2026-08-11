@@ -52,10 +52,6 @@
   .nav-btn:hover{border-color:var(--green);color:var(--green);background:rgba(126,231,135,.06)}
   .nav-btn:disabled{opacity:.25;cursor:not-allowed}
 
-  /* Top-left brand */
-  #brand{position:fixed;top:18px;left:24px;z-index:100;font-size:13px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase}
-  #brand b{color:var(--green)}
-
   /* Deck */
   #deck{position:fixed;inset:0}
   .slide{position:absolute;inset:0;padding:6vh 7vw;display:flex;flex-direction:column;justify-content:center;opacity:0;pointer-events:none;transform:translateX(40px);transition:opacity .5s ease, transform .5s cubic-bezier(.2,.7,.2,1)}
@@ -86,7 +82,7 @@
   
   /* Lists */
   ul.dots{list-style:none;padding:0}
-  ul.dots li{padding:8px 0 8px 28px;position:relative;color:#c9d3cc}
+  ul.dots li{padding:8px 0 8px 28px;position:relative;color:#c9d3cc;font-size:clamp(22px,1.8vw,28px)}
   ul.dots li::before{content:"⋄";position:absolute;left:0;color:var(--green);font-weight:700}
   ul.dots li b{color:var(--fg);font-weight:500}
 
@@ -177,8 +173,12 @@
   svg.diagram text{font-family:'JetBrains Mono';font-size:14px;fill:var(--fg)}
   svg.diagram .lbl-mut{fill:var(--muted);font-size:10px}
   
-  /* Hand-drawn filter for meme figures */
-  .sketch{filter:url(#wobble)}
+  /* 3D rotating compass */
+  .compass3d{animation:compassRock 6s ease-in-out infinite alternate;transform-style:preserve-3d}
+  @keyframes compassRock{from{transform:rotateY(-18deg) rotateX(-5deg)}to{transform:rotateY(18deg) rotateX(7deg)}}
+  .compass3d .needle{animation:needleSpin 9s linear infinite;transform-box:view-box;transform-origin:120px 120px}
+  @keyframes needleSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
   
   /* Paper card grid */
   .papers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
@@ -270,7 +270,6 @@
 </svg>
 
 <div id="progress"></div>
-<div id="brand"><b>◆</b> FIELD GUIDE · v1.0 · IISER Kolkata</div>
 
 <div id="deck">
 
@@ -351,15 +350,17 @@
         <li>Everything in this talk is something you can <b>touch this week</b>.</li>
       </ul>
     </div>
-    <div style="display:flex;justify-content:center">
-      <!-- Hand-drawn map / compass -->
-      <svg viewBox="0 0 240 240" width="240" height="240" class="sketch">
-        <circle cx="120" cy="120" r="100" class="stroke-muted" stroke-dasharray="3 4"/>
-        <circle cx="120" cy="120" r="70" class="stroke" stroke-width="1.2"/>
-        <circle cx="120" cy="120" r="40" class="stroke-amber" stroke-width="1.2"/>
-        <circle cx="120" cy="120" r="6" fill="var(--green)"/>
-        <path d="M120 30 L120 60 M120 180 L120 210 M30 120 L60 120 M180 120 L210 120" class="stroke"/>
-        <path d="M120 50 L130 80 L120 70 L110 80 Z" fill="var(--red)"/>
+    <div style="display:flex;justify-content:center;perspective:800px">
+      <!-- Hand-drawn compass, now a slow 3D-rotating one (needle spins too) -->
+      <svg viewBox="0 0 240 240" width="240" height="240" class="sketch compass3d">
+        <circle cx="120" cy="120" r="100" class="stroke-muted" stroke-dasharray="3 4"></circle>
+        <circle cx="120" cy="120" r="70" class="stroke" stroke-width="1.2"></circle>
+        <circle cx="120" cy="120" r="40" class="stroke-amber" stroke-width="1.2"></circle>
+        <circle cx="120" cy="120" r="6" fill="var(--green)"></circle>
+        <path d="M120 30 L120 60 M120 180 L120 210 M30 120 L60 120 M180 120 L210 120" class="stroke"></path>
+        <g class="needle">
+          <path d="M120 50 L130 80 L120 70 L110 80 Z" fill="var(--red)"></path>
+        </g>
         <text x="120" y="22" text-anchor="middle" class="lbl-mut">N</text>
         <text x="120" y="228" text-anchor="middle" class="lbl-mut">S</text>
         <text x="222" y="124" class="lbl-mut">E</text>
@@ -376,16 +377,26 @@
   <h2 class="title">What do <em>you</em> mean by "AI"?</h2>
   <h3 class="sub">so, hands up — which one is it?</h3>
   
-  <div class="opt-grid">
-    <div class="opt"><span class="q">A</span><span class="t">ChatGPT / Gemini / Copilot</span></div>
-    <div class="opt"><span class="q">B</span><span class="t">Robots &amp; self-driving cars</span></div>
-    <div class="opt"><span class="q">C</span><span class="t">The algorithm recommending your reels</span></div>
-    <div class="opt"><span class="q">D</span><span class="t">A calculator on steroids</span></div>
-    <div class="opt hype" style="grid-column:1/3"><span class="q">E</span><span class="t">Pure hype?</span></div>
-  </div>
-  
-  <div class="fieldnote amber">
-    <b style="color:var(--amber)">THE DEAL →</b> Whatever you said — we'll build on it. By the end, you'll have a <i>sharper</i> answer.
+  <div class="two-col" style="margin-top:16px;align-items:flex-start">
+    <div>
+      <div class="opt-grid">
+        <div class="opt"><span class="q">A</span><span class="t">ChatGPT / Gemini / Copilot</span></div>
+        <div class="opt"><span class="q">B</span><span class="t">Robots &amp; self-driving cars</span></div>
+        <div class="opt"><span class="q">C</span><span class="t">The algorithm recommending your reels</span></div>
+        <div class="opt"><span class="q">D</span><span class="t">A calculator on steroids</span></div>
+        <div class="opt hype" style="grid-column:1/3"><span class="q">E</span><span class="t">Pure hype?</span></div>
+      </div>
+
+      <div class="fieldnote amber">
+        <b style="color:var(--amber)">THE DEAL →</b> Whatever you said — we'll build on it. By the end, you'll have a <i>sharper</i> answer.
+      </div>
+    </div>
+    <div class="step" style="display:flex;justify-content:center;align-items:center;flex-direction:column;gap:10px">
+      <div class="meme-card tilt-l" style="max-width:430px">
+        <img src="assets/img/meme_whatisai.jpg" alt="ancient aliens — AI? just statistics with confidence">
+      </div>
+      <div style="font-family:'Caveat';font-size:20px;color:var(--muted);text-align:center;max-width:430px">everyone's definition is different</div>
+    </div>
   </div>
 </section>
 
@@ -516,7 +527,7 @@
   </div>
   
   <div style="display:flex;justify-content:center;margin-top:14px">
-    <div class="meme-card" style="width:170px"><img src="assets/img/meme_allthethings.png" alt="learn all the tools"></div>
+    <div class="meme-card" style="width:170px"><img src="assets/img/meme_allthethings.jpg" alt="learn all the tools"></div>
   </div>
 </section>
 
@@ -577,9 +588,8 @@
         <li>What I work in: <b>LLMs</b> — next-token predictors.</li>
       </ul>
       
-      <div class="meme-row" style="margin-top:20px">
-        <div class="meme-card tilt-l"><img src="assets/img/meme_expandingbrain.png" alt="the zoom levels of AI"></div>
-        <div class="meme-card tilt-r"><img src="assets/img/xkcd_machine_learning.png" alt="xkcd 1838 — machine learning"></div>
+      <div style="margin-top:20px;display:flex;justify-content:center">
+        <div class="meme-card tilt-r" style="max-width:320px"><img src="assets/img/xkcd_machine_learning.png" alt="xkcd 1838 — machine learning"></div>
       </div>
       <div style="margin-top:10px;text-align:center;font-family:'Caveat';font-size:17px;color:var(--amber)">xkcd 1838 — "machine learning, the honest version"</div>
     </div>
@@ -614,7 +624,7 @@
       
       <!-- Meme: trust me bro -->
       <div style="margin-top:24px;display:flex;align-items:center;gap:14px">
-        <div class="meme-card" style="max-width:150px"><img src="assets/img/meme_thisisfine.png" alt="everything is fine"></div>
+        <div class="meme-card" style="max-width:150px"><img src="assets/img/meme_thisisfine.jpg" alt="everything is fine"></div>
         <div style="font-family:'Caveat';font-size:22px;color:var(--green);line-height:1.1;max-width:200px">
           "trust me bro,<br>I know this token"
         </div>
@@ -959,8 +969,8 @@
       </ul>
     </div>
     <div style="display:flex;justify-content:center;flex-direction:column;gap:18px;align-items:center">
-      <div class="meme-card tilt-l" style="max-width:280px"><img src="assets/img/meme_samepicture.png" alt="video, photos — text? they're the same picture"></div>
-      <div class="meme-card tilt-r" style="max-width:280px"><img src="assets/img/meme_alwayshasbeen.png" alt="wait, it's all text? always has been"></div>
+      <div class="meme-card tilt-l" style="max-width:280px"><img src="assets/img/meme_samepicture.jpg" alt="video, photos — text? they're the same picture"></div>
+      <div class="meme-card tilt-r" style="max-width:280px"><img src="assets/img/meme_alwayshasbeen.jpg" alt="wait, it's all text? always has been"></div>
     </div>
   </div>
 </section>
@@ -1070,7 +1080,7 @@
   
   <div class="two-col">
     <div style="display:flex;justify-content:center;align-items:center;flex-direction:column">
-      <div class="meme-card tilt-l" style="max-width:340px"><img src="assets/img/meme_onedoesnotsimply.png" alt="one does not simply run a 7B LLM on a 4GB laptop"></div>
+      <div class="meme-card tilt-l" style="max-width:340px"><img src="assets/img/meme_onedoesnotsimply.jpg" alt="one does not simply run a 7B LLM on a 4GB laptop"></div>
     </div>
     <div>
       <ul class="dots">
@@ -1340,7 +1350,7 @@
   const STEP_SEL = 'ul.dots > li, .opt, .fieldnote, .terminal, .tool-grid, .papers, .meme-card, .card, .bignum, .step';
   const isTitle = i => i === 0;   // title slide renders fully, no steps
 
-  let idx = 0, step = 0;
+  let idx = 0, step = -1;   // step -1 = only the title/question is visible
 
   const cur = document.getElementById('cur');
   const tot = document.getElementById('tot');
@@ -1371,7 +1381,7 @@
     });
     cur.textContent = String(idx+1).padStart(2,'0');
     prog.style.width = ((idx+1)/total*100)+'%';
-    prev.disabled = idx===0 && step===0;
+    prev.disabled = idx===0 && step<=0;
     // step pips: how many points remain on this slide
     const st = steps(idx);
     pips.innerHTML = '';
@@ -1386,15 +1396,15 @@
     document.querySelectorAll('#overview button').forEach((b,i)=>{ b.classList.toggle('cur', i===idx); });
   }
 
-  function go(n){ idx = Math.max(0, Math.min(total-1, n)); step = 0; render(); }
+  function go(n){ idx = Math.max(0, Math.min(total-1, n)); step = -1; render(); }
 
   function nextStep(){
     const st = steps(idx);
     if(step < st.length-1){ step++; render(); }
-    else if(idx < total-1){ idx++; step = 0; render(); }
+    else if(idx < total-1){ idx++; step = -1; render(); }
   }
   function prevStep(){
-    if(step > 0){ step--; render(); }
+    if(step > -1){ step--; render(); }
     else if(idx > 0){ idx--; const st = steps(idx); step = Math.max(0, st.length-1); render(); }
   }
 
