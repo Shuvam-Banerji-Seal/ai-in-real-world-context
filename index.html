@@ -281,7 +281,7 @@
 <section class="slide active">
   <div class="grid-bg"></div>
   <div class="deco-corner deco-tl">N 22.97° · E 88.51°</div>
-  <div class="deco-corner deco-tr">SESSION 01 / 31</div>
+  <div class="deco-corner deco-tr">SESSION 01 / 38</div>
   <div class="deco-corner deco-bl">EST. READING TIME · 60 MIN</div>
   
   <div class="kicker"><span class="num">§ 00</span> PROLOGUE — BOOT SEQUENCE</div>
@@ -1356,7 +1356,106 @@
   </div>
 </section>
 
-<!-- ========== SLIDE 26: CLOSING ========== -->
+<!-- ========== SLIDE 26: WHAT IS MCP? ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 08.3</span> MCP — MODEL CONTEXT PROTOCOL</div>
+  <h2 class="title">What is <em>MCP</em>?</h2>
+  <div class="two-col">
+    <div>
+      <ul class="dots">
+        <li>An <b>open standard</b> for connecting agents to tools &amp; data.</li>
+        <li>A <b>"USB-C port"</b> for AI tools — one protocol, many integrations.</li>
+        <li>Servers expose <b>tools, resources &amp; prompts</b> over JSON-RPC.</li>
+        <li>Born at Anthropic; adopted across the industry.</li>
+      </ul>
+    </div>
+    <div style="display:flex;justify-content:center;align-items:center">
+      <div class="fieldnote">
+        <b style="color:var(--green)">THE IDEA →</b> Your agent speaks one protocol; every tool speaks it too. Plug in. Done.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 27: MCP MEME ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 08.3</span> MCP — MODEL CONTEXT PROTOCOL</div>
+  <h2 class="title">Agents get <em>tools</em>,<br>pluggably.</h2>
+  <div class="step" style="display:flex;justify-content:center;align-items:center;margin-top:10px">
+    <div class="meme-card" style="max-width:360px"><img src="assets/img/meme_mcp.jpg" alt="MCP — Model Context Protocol"></div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 28: WHAT ARE SKILLS? ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 08.4</span> SKILLS — SKILL.MD</div>
+  <h2 class="title">What are <em>skills</em>?</h2>
+  <div class="two-col">
+    <div>
+      <ul class="dots">
+        <li>A <b>skill</b> = a folder of instructions + scripts an agent can load on demand.</li>
+        <li>The <code>SKILL.md</code> file describes <b>what</b> it does and <b>how</b> to run it.</li>
+        <li>The agent loads it only when a task <b>matches its description</b>.</li>
+        <li><b>Reusable</b> — teach the agent once, use it everywhere.</li>
+      </ul>
+    </div>
+    <div style="display:flex;justify-content:center;align-items:center">
+      <div class="fieldnote amber">
+        <b style="color:var(--amber)">THE IDEA →</b> Like plugins for your brain. The agent grabs the skill when the job fits.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 29: SKILLS MEME ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 08.4</span> SKILLS — REUSABLE ABILITIES</div>
+  <h2 class="title">Skills = <em>reusable</em><br>agent abilities.</h2>
+  <div class="step" style="display:flex;justify-content:center;align-items:center;margin-top:10px">
+    <div class="meme-card" style="max-width:540px"><img src="assets/img/meme_skills.jpg" alt="agent skills meme"></div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 30: WHAT IS OPENCLAW? ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 08.5</span> OPENCLAW</div>
+  <h2 class="title">What is <em>OpenClaw</em>?</h2>
+  <div class="two-col">
+    <div>
+      <ul class="dots">
+        <li>An <b>open-source, local-first</b> AI assistant that runs in your terminal.</li>
+        <li>It hooks into your <b>files, apps &amp; tools</b> — read, write, run, browse.</li>
+        <li>Inspired by "computer-use" assistants, but <b>open &amp; on your machine</b>.</li>
+        <li>Agents <b>act</b> in your environment, not just chat.</li>
+      </ul>
+    </div>
+    <div style="display:flex;justify-content:center;align-items:center">
+      <div class="fieldnote">
+        <b style="color:var(--green)">THE IDEA →</b> Your computer is the model's hands. OpenClaw is the bridge.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 31: OPENCLAW GIF ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 08.5</span> OPENCLAW</div>
+  <h2 class="title">A <em>claw</em> full of tools.</h2>
+  <div class="step" style="display:flex;justify-content:center;align-items:center;margin-top:10px">
+    <img src="assets/img/openclaw.gif" alt="OpenClaw in action" style="max-width:700px;width:100%;border-radius:8px;border:1px solid var(--border);box-shadow:0 12px 30px rgba(0,0,0,.5)">
+  </div>
+</section>
+
+<!-- ========== SLIDE 32: OPENCLAW — THE INCIDENT ========== -->
+<section class="slide">
+  <div class="kicker"><span class="num">§ 08.6</span> OPENCLAW — GOING ROGUE</div>
+  <h2 class="title">And sometimes,<br>it <em>deletes your files</em>.</h2>
+  <div class="step" style="display:flex;justify-content:center;align-items:center;margin-top:10px">
+    <div class="meme-card" style="max-width:440px"><img src="assets/img/openclaw_rogue.png" alt="OpenClaw going rogue — deletes user files"></div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 33: CLOSING ========== -->
 <section class="slide">
   <div class="grid-bg"></div>
   <div class="kicker"><span class="num">§ END</span> QUESTIONS — EVERYTHING IS TEXT</div>
@@ -1390,7 +1489,7 @@
     </div>
   </div>
   
-  <div class="deco-corner deco-bl">EOF · 31/31</div>
+  <div class="deco-corner deco-bl">EOF · 38/38</div>
 </section>
 
 </div>

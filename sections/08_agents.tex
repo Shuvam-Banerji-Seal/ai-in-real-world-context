@@ -80,3 +80,75 @@
         That's an \glow{agentic tool}.}
     \end{center}
 \end{frame}
+
+% ---------------------------------------------------------------------------
+% 8.4  MCP (image only)
+% ---------------------------------------------------------------------------
+% ---------------------------------------------------------------------------
+% 8.4  what is MCP? (explainer)
+% ---------------------------------------------------------------------------
+\begin{frame}{What is MCP?}{Model Context Protocol}
+    \pause\begin{itemize}[<+->]
+        \item An \glow{open standard} for connecting agents to tools \& data.
+        \item A \glow{"USB-C port"} for AI tools --- one protocol, many integrations.
+        \item Servers expose \glow{tools, resources \& prompts} over JSON-RPC.
+        \item Born at Anthropic; adopted across the industry.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{MCP --- Model Context Protocol}{agents get tools, pluggably}
+    \begin{center}
+        \includegraphics[height=6.8cm]{assets/img/meme_mcp.jpg}
+    \end{center}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% 8.5  skills (image only)
+% ---------------------------------------------------------------------------
+% ---------------------------------------------------------------------------
+% 8.5  what are skills? (explainer)
+% ---------------------------------------------------------------------------
+\begin{frame}{What are skills?}{skill.md files}
+    \pause\begin{itemize}[<+->]
+        \item A \glow{skill} = a folder of instructions + scripts an agent can load on demand.
+        \item The \glow{SKILL.md} file describes what it does and how to run it.
+        \item The agent loads it only when a task \glow{matches its description}.
+        \item \glow[neongreen]{Reusable} --- teach the agent once, use it everywhere.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Skills}{reusable abilities for the agent}
+    \begin{center}
+        \includegraphics[height=6.2cm]{assets/img/meme_skills.jpg}
+    \end{center}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% 8.6  openclaw (static frame; the HTML deck uses the animated GIF)
+% ---------------------------------------------------------------------------
+% ---------------------------------------------------------------------------
+% 8.6  what is openclaw? (explainer)
+% ---------------------------------------------------------------------------
+\begin{frame}{What is OpenClaw?}{a local, open assistant}
+    \pause\begin{itemize}[<+->]
+        \item An \glow{open-source, local-first} AI assistant that runs in your terminal.
+        \item It hooks into your \glow{files, apps \& tools} --- read, write, run, browse.
+        \item Inspired by "computer-use" assistants, but \glow{open \& on your machine}.
+        \item Agents \glow[neongreen]{act} in your environment, not just chat.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{OpenClaw}{a claw full of tools}
+    \begin{center}
+        \includegraphics[height=6.2cm]{assets/img/openclaw_static.png}
+    \end{center}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% 8.7  openclaw going rogue (image only)
+% ---------------------------------------------------------------------------
+\begin{frame}{OpenClaw, going rogue}{the incident}
+    \begin{center}
+        \includegraphics[height=6.5cm]{assets/img/openclaw_rogue.png}
+    \end{center}
+\end{frame}
