@@ -34,7 +34,7 @@
                     \node[text=neongreen,font=\scriptsize,align=center] at (2.2,-0.55) {LLMs\\[-0.1em] (GenAI)};
                 \end{tikzpicture}
             \end{center}
-            \begin{itemize}[<+->]
+            \pause\begin{itemize}[<+->]
                 \item \glow{AI} = the umbrella over everything "intelligent".
                 \item What I work in: \glow[neongreen]{LLMs} --- \emph{next-token predictors}.
             \end{itemize}
@@ -82,12 +82,12 @@
             {\small \glow{Input:} a token sequence $\longrightarrow$ \glow[neongreen]{Output:} probabilities over the next token.}
         \end{column}
         \begin{column}{0.4\textwidth}
-            \begin{itemize}[<+->]
+            \pause\begin{itemize}[<+->]
                 \item The model never \emph{searches} --- it \emph{predicts}.
                 \item It repeats this loop, token by token, until you stop it.
                 \item Add tools, and prediction becomes \glow[neongreen]{action}.
             \end{itemize}
-            \onslide<4->{\begin{center}
+            \onslide<5->{\begin{center}
                 \includegraphics[height=3.1cm]{assets/img/meme_thisisfine.jpg}\\[0.1em]
                 {\tiny\color{softgray}trust me bro --- I know this token}
             \end{center}}
@@ -121,7 +121,7 @@
             \end{center}
         \end{column}
         \begin{column}{0.4\textwidth}
-            \begin{itemize}[<+->]
+            \pause\begin{itemize}[<+->]
                 \item The \glow[neonyellow]{lens}: look at any AI through it.
                 \item \glow{Agents}? next-token prediction + tools.
                 \item \glow{Alignment}? steering the same predictor.
